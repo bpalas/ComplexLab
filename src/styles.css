@@ -805,14 +805,80 @@ input[type='range']::-moz-range-thumb {
   border: 1px dashed var(--line);
 }
 
-.formula .math {
-  display: block;
-  font-family: 'JetBrains Mono', 'Consolas', monospace;
-  font-size: 12.5px;
+/* Componentes comunes de matemática (KaTeX) */
+
+.math-block {
   color: var(--cyan);
-  margin-bottom: 8px;
-  white-space: nowrap;
   overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.math-block .katex-display {
+  margin: 6px 0;
+}
+
+.math-inline .katex {
+  font-size: 1em;
+  color: var(--cyan);
+}
+
+.formula .math-block {
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.formula-master {
+  margin: 10px 0 18px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--cyan) 4%, transparent);
+}
+
+.formula-master .math-block {
+  font-size: 14px;
+}
+
+.formula-master-caption {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.55;
+  margin-top: 10px;
+  max-width: 880px;
+}
+
+/* Sección de unicidad científica */
+
+.uniq-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+  margin-top: 4px;
+}
+
+.uniq-item {
+  padding: 12px;
+  border: 1px dashed var(--line);
+}
+
+.uniq-item h4 {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 6px;
+}
+
+.uniq-item p {
+  font-size: 10.5px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.formula-foot .refs {
+  display: block;
+  margin-top: 8px;
+  font-size: 10px;
+  opacity: 0.8;
 }
 
 .formula h4 {

@@ -1,5 +1,5 @@
 /**
- * Crecimiento de copos de nieve — modelo de Reiter (1990) sobre red hexagonal.
+ * Crecimiento de copos de nieve — modelo de Reiter (2005) sobre red hexagonal.
  *
  * La química impone la geometría: cada molécula de H₂O forma 4 enlaces de
  * hidrógeno y, al congelarse, el empaquetamiento de mínima energía es una red

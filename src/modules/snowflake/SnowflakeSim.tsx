@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { SnowflakeEngine, SnowParams, SnowStats, DEFAULT_SNOW } from './engine';
 import { Slider } from '../../components/Slider';
+import { FormulaPanel, FormulaCard } from '../../components/math/FormulaPanel';
+import { MathInline } from '../../components/math/Math';
 
 /** Pasos de simulación por segundo a velocidad 1× — lento a propósito:
  *  el copo debe verse CRECER rama a rama, no aparecer como una nube. */
@@ -207,58 +209,135 @@ export function SnowflakeSim() {
       </section>
     </div>
 
+    <FormulaPanel
+      title="Las matemáticas del copo"
+      intro={
+        <>
+          Cada celda z de la red hexagonal guarda un número{' '}
+          <MathInline tex="s_z \in [0,\infty)" />: cuánta agua hay ahí. Si{' '}
+          <MathInline tex="s_z \ge 1" />, la celda es hielo. El modelo completo
+          (Reiter, 2005) es UNA sola regla de actualización, aplicada a todas las
+          celdas en cada paso de tiempo:
+        </>
+      }
+      master={
+        's_z^{\\,t+1} \\;=\\; \\underbrace{u_z^{\\,t} + \\frac{\\alpha}{12}\\sum_{n \\in N(z)} \\bigl(u_n^{\\,t} - u_z^{\\,t}\\bigr)}_{\\text{el vapor difunde (Fick)}} \\;+\\; \\underbrace{v_z^{\\,t} + \\gamma \\cdot \\mathbf{1}_{\\mathrm{rec}(z)}}_{\\text{el vapor se deposita}}'
+      }
+      masterCaption={
+        <>
+          El agua de cada celda se separa en dos partes:{' '}
+          <MathInline tex="u_z" /> (vapor libre, que difunde) y{' '}
+          <MathInline tex="v_z" /> (agua capturada por el cristal, que ya no se
+          mueve). <MathInline tex="N(z)" /> son las 6 vecinas hexagonales y{' '}
+          <MathInline tex="\mathbf{1}_{\mathrm{rec}(z)}" /> vale 1 solo si la
+          celda es receptiva. Las cuatro piezas, una a una:
+        </>
+      }
+      foot={
+        <p>
+          ¿Y por qué salen ramas y no un círculo? Una punta que sobresale «ve»
+          más vapor a su alrededor que una cara plana, así que crece más rápido
+          y sobresale aún más. La regla 2 la alimenta y la regla 3 la congela:
+          amplificación de una fluctuación — emergencia pura.
+        </p>
+      }
+    >
+      <FormulaCard
+        tex="\mathrm{rec}(z) \iff s_z \ge 1 \;\lor\; \exists\, n \in N(z) : s_n \ge 1"
+        title="1 · ¿Quién puede congelarse?"
+      >
+        Solo las celdas que tocan el cristal son «receptivas»: el vapor que les
+        llega ya no se escapa. Las 6 vecinas de la red hexagonal son las 6
+        direcciones del hielo Ih — aquí nace la simetría.
+      </FormulaCard>
+      <FormulaCard
+        tex="u_z' = u_z + \frac{\alpha}{12}\Bigl(\textstyle\sum_{n \in N(z)} u_n - 6\,u_z\Bigr)"
+        title="2 · El vapor viaja (difusión)"
+      >
+        Es la ley de Fick discreta: el agua de las celdas NO receptivas fluye
+        de donde hay más hacia donde hay menos. α dice qué tan rápido. Cada
+        celda se compara con el promedio de sus 6 vecinas.
+      </FormulaCard>
+      <FormulaCard
+        tex="v_z' = v_z + \gamma \qquad s_z' = u_z' + v_z'"
+        title="3 · Lo que toca, se pega (deposición)"
+      >
+        Las celdas receptivas suman γ en cada paso: vapor que se deposita como
+        hielo y ya no difunde. Cuando la suma s′ cruza 1, la celda se congela
+        para siempre. γ pequeña → ramas finas; γ grande → placa.
+      </FormulaCard>
+      <FormulaCard
+        tex="\beta_{t+1} = \beta_t + \eta_t \qquad \gamma_{t+1} = \gamma_t + \xi_t"
+        title="4 · El viaje hace único al copo"
+      >
+        Mientras cae, el copo cruza capas de aire con otra temperatura y
+        humedad: β y γ hacen un camino aleatorio (η y ξ son ruido). Como el
+        copo mide ~1 mm, sus 6 ramas viven el MISMO viaje → único pero
+        simétrico.
+      </FormulaCard>
+    </FormulaPanel>
+
     <section className="panel formula-panel">
-      <h2 className="panel-title">Las matemáticas del copo, en fácil</h2>
-      <p className="panel-sub">
-        Cada celda de la red hexagonal guarda un número s: cuánta agua hay ahí.
-        Si s ≥ 1, la celda es hielo. Todo el copo sale de repetir estas cuatro
-        reglas, una y otra vez:
-      </p>
-      <div className="formula-grid">
-        <div className="formula">
-          <code className="math">receptiva ⇔ s ≥ 1 ó un vecino tiene s ≥ 1</code>
-          <h4>1 · ¿Quién puede congelarse?</h4>
+      <h2 className="panel-title">¿Por qué ningún copo es igual? La ciencia</h2>
+      <div className="uniq-grid">
+        <div className="uniq-item">
+          <h4>La forma depende del clima (Nakaya, 1954)</h4>
           <p>
-            Solo las celdas que tocan el cristal son «receptivas»: el vapor que
-            les llega ya no se escapa. Las 6 vecinas de la red hexagonal son las
-            6 direcciones del hielo Ih — aquí nace la simetría.
+            Ukichiro Nakaya cultivó copos en laboratorio y descubrió que la
+            morfología del cristal queda determinada por solo dos variables:
+            temperatura <MathInline tex="T" /> y sobresaturación de vapor{' '}
+            <MathInline tex="\sigma" />. Su «diagrama de morfología» es un mapa:
+            placas a −2 °C, agujas a −5 °C, dendritas estrelladas a −15 °C. En
+            este modelo, β y γ juegan el papel de <MathInline tex="(T,\sigma)" />.
           </p>
         </div>
-        <div className="formula">
-          <code className="math">u′ = u + (α/12) · (Σ u<sub>vecinas</sub> − 6u)</code>
-          <h4>2 · El vapor viaja (difusión)</h4>
+        <div className="uniq-item">
+          <h4>El viaje es un camino aleatorio irrepetible</h4>
           <p>
-            Es la ley de Fick discreta: el agua de las celdas NO receptivas
-            fluye de donde hay más hacia donde hay menos. α dice qué tan rápido.
-            Cada celda se compara con el promedio de sus 6 vecinas.
+            Un copo tarda ~30 minutos en caer y atraviesa kilómetros de
+            atmósfera turbulenta: su historia es una trayectoria{' '}
+            <MathInline tex="(T_t, \sigma_t)" /> que ningún otro copo repite.
+            Como la forma final integra TODA la historia — cada rama, cada
+            costilla quedó grabada por una capa de aire concreta — trayectorias
+            distintas producen cristales distintos.
           </p>
         </div>
-        <div className="formula">
-          <code className="math">v′ = v + γ &nbsp;&nbsp;·&nbsp;&nbsp; s′ = u′ + v′</code>
-          <h4>3 · Lo que toca, se pega (deposición)</h4>
+        <div className="uniq-item">
+          <h4>La inestabilidad amplifica lo diminuto (Mullins–Sekerka, 1963)</h4>
           <p>
-            Las celdas receptivas suman γ en cada paso: vapor que se deposita
-            como hielo y ya no difunde. Cuando la suma s′ cruza 1, la celda se
-            congela para siempre. γ pequeña → ramas finas; γ grande → placa.
+            El crecimiento limitado por difusión es inestable: una protuberancia
+            de tamaño <MathInline tex="\delta_0" /> crece como{' '}
+            <MathInline tex="\delta(t) \sim \delta_0\, e^{\omega t}" /> con{' '}
+            <MathInline tex="\omega > 0" />. Diferencias microscópicas entre dos
+            copos «casi iguales» se amplifican exponencialmente: el sistema es
+            caótico en el sentido estricto — sensible a las condiciones
+            iniciales.
           </p>
         </div>
-        <div className="formula">
-          <code className="math">β(t+1) = β(t) + ruido &nbsp;·&nbsp; γ(t+1) = γ(t) + ruido</code>
-          <h4>4 · El viaje hace único al copo</h4>
+        <div className="uniq-item">
+          <h4>El argumento combinatorio (Libbrecht, 2005)</h4>
           <p>
-            Mientras cae, el copo cruza capas de aire con otra temperatura y
-            humedad: β y γ caminan al azar. Como el copo mide ~1 mm, sus 6 ramas
-            viven el MISMO viaje → único pero simétrico. Ningún camino se
-            repite, ningún copo tampoco.
+            Un copo contiene ~<MathInline tex="10^{18}" /> moléculas de agua y
+            un cristal complejo tiene ~100 rasgos distinguibles que pueden
+            ordenarse de <MathInline tex="100! \approx 10^{158}" /> maneras —
+            más que átomos hay en el universo (~
+            <MathInline tex="10^{80}" />). La probabilidad de que dos copos
+            complejos coincidan es, a efectos físicos, cero.
           </p>
         </div>
       </div>
       <p className="formula-foot">
-        ¿Y por qué salen ramas y no un círculo? Una punta que sobresale «ve» más
-        vapor a su alrededor que una cara plana, así que crece más rápido y
-        sobresale aún más (inestabilidad de Mullins–Sekerka). La regla 2 la
-        alimenta y la regla 3 la congela: amplificación de una fluctuación —
-        emergencia pura.
+        ¿Y por qué entonces son simétricos? Porque el cristal mide ~1 mm y las
+        variaciones atmosféricas relevantes ocurren a escala de metros: en cada
+        instante, las seis ramas sienten EXACTAMENTE las mismas condiciones. El
+        azar está en el camino (tiempo), no en el espacio. Único y simétrico no
+        se contradicen: son el mismo fenómeno visto en dos ejes distintos.
+        <span className="refs">
+          {' '}Referencias: Nakaya (1954) <i>Snow Crystals: Natural and
+          Artificial</i>; Mullins &amp; Sekerka (1963) <i>J. Appl. Phys.</i> 34;
+          Reiter (2005) <i>Chaos, Solitons &amp; Fractals</i> 23; Libbrecht
+          (2005) <i>Rep. Prog. Phys.</i> 68.
+        </span>
       </p>
     </section>
     </>

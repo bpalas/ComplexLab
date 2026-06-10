@@ -1346,3 +1346,79 @@ input[type='range']::-moz-range-thumb {
     padding: 10px 16px;
   }
 }
+
+/* ===== NET·03 — Autómatas celulares ===== */
+.ca-canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  background: #0b1018;
+}
+.ca-rule-editor {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 10px 0 6px;
+}
+.ca-transition {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.ca-transition:hover {
+  border-color: rgba(86, 232, 213, 0.5);
+}
+.ca-neigh {
+  display: flex;
+  gap: 2px;
+}
+.ca-neigh i,
+.ca-out {
+  width: 11px;
+  height: 11px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 2px;
+  background: transparent;
+}
+.ca-neigh i.on,
+.ca-out.on {
+  background: #56e8d5;
+  border-color: #56e8d5;
+}
+.ca-out {
+  width: 13px;
+  height: 13px;
+}
+.ca-rule-readout {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  opacity: 0.8;
+  margin: 4px 0 12px;
+}
+.ca-featured,
+.ca-speeds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.ca-chip {
+  padding: 5px 9px;
+  font-size: 11px;
+}
+.ca-chip small {
+  display: block;
+  opacity: 0.6;
+  font-size: 9px;
+}
+.ca-chip.active {
+  border-color: #56e8d5;
+  color: #56e8d5;
+}

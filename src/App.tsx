@@ -22,11 +22,10 @@ export function App() {
     <div className="app">
       <header className="topbar">
         <button className="brand" onClick={() => setView('dashboard')}>
-          <span className="brand-dot" />
           <span className="brand-name">
-            CHRONOS<b>CORTEX</b>
+            Complexity <b>Labs</b>
           </span>
-          <span className="brand-sub">LAB · SISTEMAS COMPLEJOS</span>
+          <span className="brand-sub">Sistemas complejos</span>
         </button>
         <nav>
           {NAV.map((n) => (
@@ -86,8 +85,8 @@ export function App() {
       </main>
 
       <footer className="footbar">
-        <span>CHRONOSCORTEX v1.0 — entorno didáctico de simulación</span>
-        <span>render: HTML5 Canvas + requestAnimationFrame</span>
+        <span className="foot-brand">Complexity Labs</span>
+        <span>Simulaciones interactivas de sistemas complejos · render en HTML5 Canvas</span>
       </footer>
     </div>
   );

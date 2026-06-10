@@ -1,6 +1,7 @@
 /* ============================================================================
-   CHRONOSCORTEX — sistema de diseño
-   Estética: instrumentación de observatorio científico / pizarra digital.
+   COMPLEXITY LABS — sistema de diseño
+   Estética: Google Labs en oscuro — mesh-gradients orgánicos, pills limpias,
+   mucho aire. El mono se reserva para detalles técnicos (códigos, kickers).
    ========================================================================== */
 
 :root {
@@ -16,7 +17,7 @@
   --amber: #ffb454;
   --blue: #4aa8ff;
   --magenta: #ff5d8f;
-  --display: 'Chakra Petch', sans-serif;
+  --display: 'Plus Jakarta Sans', sans-serif;
   --mono: 'IBM Plex Mono', monospace;
 }
 
@@ -33,28 +34,60 @@ body,
 }
 
 body {
-  background:
-    radial-gradient(ellipse 90% 60% at 50% -10%, rgba(69, 230, 200, 0.06), transparent 60%),
-    radial-gradient(ellipse 70% 50% at 85% 110%, rgba(74, 168, 255, 0.05), transparent 60%),
-    var(--bg0);
+  background: var(--bg0);
   color: var(--ink);
-  font-family: var(--mono);
+  font-family: var(--display);
   font-size: 13px;
   line-height: 1.55;
   overflow-x: hidden;
 }
 
-/* Retícula de fondo, estilo pizarra de instrumentación */
-body::before {
+/* Fondo: mesh-gradients orgánicos (blobs de la paleta) con deriva lenta.
+   Animación 100% CSS — sin JS ni requestAnimationFrame. */
+body::before,
+body::after {
   content: '';
   position: fixed;
-  inset: 0;
+  inset: -22%;
   pointer-events: none;
-  background-image:
-    linear-gradient(rgba(86, 232, 213, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(86, 232, 213, 0.025) 1px, transparent 1px);
-  background-size: 44px 44px;
   z-index: 0;
+  will-change: transform, opacity;
+}
+
+body::before {
+  background:
+    radial-gradient(36% 30% at 16% 20%, rgba(69, 230, 200, 0.13), transparent 70%),
+    radial-gradient(32% 28% at 84% 14%, rgba(74, 168, 255, 0.12), transparent 70%),
+    radial-gradient(34% 32% at 80% 84%, rgba(255, 93, 143, 0.09), transparent 70%),
+    radial-gradient(28% 26% at 14% 88%, rgba(255, 180, 84, 0.07), transparent 70%);
+  animation: meshDrift 36s ease-in-out infinite alternate;
+}
+
+body::after {
+  background:
+    radial-gradient(26% 24% at 56% 42%, rgba(74, 168, 255, 0.07), transparent 70%),
+    radial-gradient(22% 22% at 36% 72%, rgba(69, 230, 200, 0.06), transparent 70%),
+    radial-gradient(20% 20% at 70% 30%, rgba(255, 93, 143, 0.05), transparent 70%);
+  animation: meshBreath 26s ease-in-out infinite alternate;
+}
+
+@keyframes meshDrift {
+  0%   { transform: translate3d(-2%, -1.5%, 0) scale(1); opacity: 0.85; }
+  50%  { transform: translate3d(1.5%, 2%, 0) scale(1.06); opacity: 1; }
+  100% { transform: translate3d(-1%, 3%, 0) scale(1.02); opacity: 0.9; }
+}
+
+@keyframes meshBreath {
+  0%   { transform: translate3d(2%, 1%, 0) scale(1.04); opacity: 0.7; }
+  50%  { transform: translate3d(-1.5%, -2%, 0) scale(1); opacity: 1; }
+  100% { transform: translate3d(1%, -3%, 0) scale(1.05); opacity: 0.8; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    animation: none;
+  }
 }
 
 .app {
@@ -83,12 +116,13 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 0 22px;
-  height: 58px;
-  border-bottom: 1px solid var(--line);
-  background: rgba(5, 9, 16, 0.85);
-  backdrop-filter: blur(8px);
+  gap: 20px;
+  padding: 0 28px;
+  height: 64px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(4, 7, 13, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   position: sticky;
   top: 0;
   z-index: 50;
@@ -97,69 +131,69 @@ button {
 .brand {
   display: flex;
   align-items: baseline;
-  gap: 10px;
-}
-
-.brand-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--cyan);
-  box-shadow: 0 0 10px var(--cyan);
-  animation: pulse 2.4s ease-in-out infinite;
-  align-self: center;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.75); }
+  gap: 12px;
+  border-radius: 10px;
 }
 
 .brand-name {
   font-family: var(--display);
-  font-size: 17px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  white-space: nowrap;
 }
 
 .brand-name b {
-  color: var(--cyan);
-  font-weight: 700;
+  font-weight: 800;
+  background: linear-gradient(94deg, var(--cyan) 0%, var(--blue) 52%, var(--magenta) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .brand-sub {
+  font-family: var(--mono);
   font-size: 9px;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
   color: var(--muted);
 }
 
 .topbar nav {
   display: flex;
-  gap: 4px;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .nav-btn {
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  padding: 7px 13px;
+  font-family: var(--display);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 8px 16px;
   border: 1px solid transparent;
+  border-radius: 999px;
   color: var(--muted);
-  transition: all 0.18s;
+  transition: color 0.18s, background-color 0.18s, border-color 0.18s;
 }
 
 .nav-btn:hover {
   color: var(--ink);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .nav-btn.active {
-  color: var(--cyan);
-  border-color: var(--line-strong);
-  background: rgba(69, 230, 200, 0.05);
+  color: #04121c;
+  font-weight: 700;
+  background: linear-gradient(94deg, var(--cyan), var(--blue));
+  border-color: transparent;
 }
 
 .main {
   flex: 1;
-  padding: 26px 22px 40px;
+  padding: 34px 28px 56px;
   max-width: 1640px;
   width: 100%;
   margin: 0 auto;
@@ -167,12 +201,27 @@ button {
 
 .footbar {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  padding: 10px 22px;
-  border-top: 1px solid var(--line);
-  font-size: 9px;
-  letter-spacing: 0.16em;
+  gap: 16px;
+  padding: 16px 28px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 11px;
+  letter-spacing: 0.01em;
   color: var(--muted);
+}
+
+.foot-brand {
+  font-family: var(--display);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.footbar span:last-child {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
 }
 
 /* ── Paneles con marcas de esquina ───────────────────────────────────── */

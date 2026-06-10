@@ -19,12 +19,12 @@
 **Files:**
 - Modify: `package.json` (scripts)
 
-- [ ] **Step 1: Instalar vitest**
+- [x] **Step 1: Instalar vitest**
 
 Run: `npm install -D vitest`
 Expected: añade `vitest` a devDependencies sin errores.
 
-- [ ] **Step 2: Añadir script de test a `package.json`**
+- [x] **Step 2: Añadir script de test a `package.json`**
 
 En el bloque `"scripts"` añadir:
 
@@ -32,12 +32,12 @@ En el bloque `"scripts"` añadir:
 "test": "vitest run"
 ```
 
-- [ ] **Step 3: Verificar que vitest corre (sin tests aún)**
+- [x] **Step 3: Verificar que vitest corre (sin tests aún)**
 
 Run: `npm test`
 Expected: exit code 1 con "No test files found" — correcto en este punto.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add package.json package-lock.json
@@ -52,7 +52,7 @@ git commit -m "chore: add vitest"
 - Create: `src/modules/cellular/engine.test.ts`
 - Create: `src/modules/cellular/engine.ts`
 
-- [ ] **Step 1: Escribir los tests (fallarán)**
+- [x] **Step 1: Escribir los tests (fallarán)**
 
 Crear `src/modules/cellular/engine.test.ts` con este contenido exacto:
 
@@ -134,12 +134,12 @@ describe('ElementaryCA', () => {
 });
 ```
 
-- [ ] **Step 2: Verificar que fallan**
+- [x] **Step 2: Verificar que fallan**
 
 Run: `npm test`
 Expected: FAIL — `Cannot find module './engine'` (o equivalente).
 
-- [ ] **Step 3: Implementar el motor**
+- [x] **Step 3: Implementar el motor**
 
 Crear `src/modules/cellular/engine.ts` con este contenido exacto:
 
@@ -205,12 +205,12 @@ export class ElementaryCA {
 }
 ```
 
-- [ ] **Step 4: Verificar que pasan**
+- [x] **Step 4: Verificar que pasan**
 
 Run: `npm test`
 Expected: PASS — 7 tests.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/modules/cellular/engine.ts src/modules/cellular/engine.test.ts
@@ -225,7 +225,7 @@ git commit -m "feat: motor ElementaryCA con verificacion determinista"
 - Create: `src/modules/cellular/CellularSim.tsx`
 - Modify: `src/styles.css` (añadir estilos al final)
 
-- [ ] **Step 1: Crear el componente**
+- [x] **Step 1: Crear el componente**
 
 Crear `src/modules/cellular/CellularSim.tsx` con este contenido exacto:
 
@@ -475,7 +475,7 @@ export function CellularSim() {
 }
 ```
 
-- [ ] **Step 2: Añadir estilos al final de `src/styles.css`**
+- [x] **Step 2: Añadir estilos al final de `src/styles.css`**
 
 ```css
 /* ===== NET·03 — Autómatas celulares ===== */
@@ -557,12 +557,12 @@ export function CellularSim() {
 
 Nota: si alguna clase (`btn`, `panel`, `module-grid`, etc.) tiene otro nombre en `styles.css`, seguir el patrón real del archivo — `NetworkSim.tsx` es la referencia.
 
-- [ ] **Step 3: Verificar tipos**
+- [x] **Step 3: Verificar tipos**
 
 Run: `npx tsc --noEmit`
 Expected: sin errores.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/modules/cellular/CellularSim.tsx src/styles.css
@@ -577,7 +577,7 @@ git commit -m "feat: laboratorio CellularSim con editor de regla y tapiz increme
 - Modify: `src/App.tsx`
 - Modify: `src/dashboard/Dashboard.tsx:42-45`
 
-- [ ] **Step 1: Registrar la vista en `src/App.tsx`**
+- [x] **Step 1: Registrar la vista en `src/App.tsx`**
 
 1. Añadir import: `import { CellularSim } from './modules/cellular/CellularSim';`
 2. Ampliar el tipo: `export type View = 'dashboard' | 'laboratorio' | 'red' | 'agentes' | 'celular';`
@@ -597,7 +597,7 @@ git commit -m "feat: laboratorio CellularSim con editor de regla y tapiz increme
 )}
 ```
 
-- [ ] **Step 2: Activar la tarjeta NET·03 en `src/dashboard/Dashboard.tsx`**
+- [x] **Step 2: Activar la tarjeta NET·03 en `src/dashboard/Dashboard.tsx`**
 
 Al módulo `code: 'NET·03'` añadir la propiedad `view: 'celular'` y actualizar la descripción:
 
@@ -610,12 +610,12 @@ Al módulo `code: 'NET·03'` añadir la propiedad `view: 'celular'` y actualizar
 },
 ```
 
-- [ ] **Step 3: Verificación completa**
+- [x] **Step 3: Verificación completa**
 
 Run: `npm test` → PASS (7 tests)
 Run: `npm run build` → sin errores de tipos y bundle generado.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/App.tsx src/dashboard/Dashboard.tsx
@@ -626,7 +626,7 @@ git commit -m "feat: activar modulo NET-03 automatas celulares en la app"
 
 ### Task 5: Verificación visual en navegador
 
-- [ ] **Step 1: Levantar el dev server y verificar en el preview**
+- [x] **Step 1: Levantar el dev server y verificar en el preview**
 
 Run: `npm run dev` (o herramienta de preview disponible). Verificar:
 1. La tarjeta NET·03 aparece ACTIVA y abre el módulo.
@@ -636,7 +636,7 @@ Run: `npm run dev` (o herramienta de preview disponible). Verificar:
 5. A 8× el tapiz hace scroll fluido sin congelar la UI.
 6. Sin errores en consola.
 
-- [ ] **Step 2: Commit final si hubo ajustes**
+- [x] **Step 2: Commit final si hubo ajustes**
 
 ```bash
 git add -A

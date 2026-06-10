@@ -54,6 +54,12 @@ const CATEGORIES: CategoryDef[] = [
       'Coordinación sin comunicación directa, descomposición de información (sinergia vs redundancia) y dinámicas colectivas en ecosistemas de agentes.',
     modules: [
       {
+        code: 'AGI·00',
+        title: 'Boids · Bandadas Emergentes (Reynolds)',
+        desc: 'Tres reglas locales — separación, alineación, cohesión — y emerge una bandada. Pasa de gas a bandada a vórtice, y dispersa el grupo con un depredador.',
+        view: 'boids',
+      },
+      {
         code: 'AGI·01',
         title: 'Coordinación Emergente y Sinergia Informacional',
         desc: 'Cuatro agentes autónomos convergen a un objetivo común usando solo el histórico del grupo. Tres paradigmas: homogéneo, especialización e inferencia (ToM).',

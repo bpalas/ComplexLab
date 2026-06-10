@@ -5,8 +5,9 @@ import { SandboxSim } from './modules/sandbox/SandboxSim';
 import { NetworkSim } from './modules/network/NetworkSim';
 import { AgentsSim } from './modules/agents/AgentsSim';
 import { CellularSim } from './modules/cellular/CellularSim';
+import { BoidsSim } from './modules/boids/BoidsSim';
 
-export type View = 'dashboard' | 'laboratorio' | 'red' | 'agentes' | 'celular';
+export type View = 'dashboard' | 'laboratorio' | 'red' | 'agentes' | 'celular' | 'boids';
 
 
 export function App() {
@@ -54,6 +55,16 @@ export function App() {
               sub="Aprendizaje asociativo hebbiano · pulsos · plasticidad · poda"
             />
             <NetworkSim />
+          </>
+        )}
+        {view === 'boids' && (
+          <>
+            <ModuleHeader
+              code="AGI·00"
+              title="Boids · Bandadas Emergentes (Reynolds)"
+              sub="Separación · alineación · cohesión · depredador interactivo · mundo toroidal"
+            />
+            <BoidsSim />
           </>
         )}
         {view === 'agentes' && (

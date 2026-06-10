@@ -2,12 +2,14 @@ import { ElementaryCA } from '../modules/cellular/engine';
 import { HebbianNetwork } from '../modules/network/engine';
 import { SandboxEngine, DEFAULT_PARAMS } from '../modules/sandbox/engine';
 import { CoordinationEngine, AGENTS } from '../modules/agents/engine';
+import { BoidsEngine, DEFAULT_BOIDS } from '../modules/boids/engine';
 
 export type PreviewKind =
   | 'synapse'
   | 'network'
   | 'cellular'
   | 'agents'
+  | 'boids'
   | 'swarm'
   | 'cascade'
   | 'attention'
@@ -18,6 +20,7 @@ const KIND_BY_CODE: Record<string, PreviewKind> = {
   'NET·01': 'network',
   'NET·02': 'swarm',
   'NET·03': 'cellular',
+  'AGI·00': 'boids',
   'AGI·01': 'agents',
   'AGI·02': 'cascade',
   'AGI·03': 'attention',
@@ -130,6 +133,15 @@ function paintAgents(ctx: CanvasRenderingContext2D, w: number, h: number): void 
   }
 }
 
+/** AGI·00 — boids reales: se evolucionan unos segundos y se usa su render(). */
+function paintBoids(ctx: CanvasRenderingContext2D, w: number, h: number): void {
+  const rng = mulberry32(11);
+  const eng = new BoidsEngine(60, rng);
+  eng.reset(w, h);
+  for (let s = 0; s < 240; s++) eng.update(1 / 60, DEFAULT_BOIDS, w, h);
+  eng.render(ctx, w, h);
+}
+
 /** Motivo determinista para módulos sin motor: PRNG con semilla fija. */
 function mulberry32(seed: number): () => number {
   return function () {
@@ -235,6 +247,7 @@ const PAINTERS: Record<PreviewKind, (ctx: CanvasRenderingContext2D, w: number, h
   network: paintNetwork,
   cellular: paintCellular,
   agents: paintAgents,
+  boids: paintBoids,
   swarm: paintSwarm,
   cascade: paintCascade,
   attention: paintAttention,

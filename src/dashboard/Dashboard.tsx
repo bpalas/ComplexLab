@@ -76,13 +76,14 @@ export function Dashboard({ onOpen }: { onOpen: (v: View) => void }) {
   return (
     <div className="dashboard">
       <header className="hero">
-        <p className="hero-kicker">ENTORNO DIDÁCTICO · APRENDIZAJE EMPÍRICO</p>
+        <p className="hero-kicker">Complexity Labs · Experimentos</p>
         <h1>
-          Sistemas Complejos,<br />Redes <em>&amp;</em> Fenómenos Emergentes
+          Juega con la <em>complejidad</em>
         </h1>
         <p className="hero-sub">
-          Laboratorio interactivo de simulación. Interviene los parámetros,
-          perturba el sistema y observa cómo el orden emerge — o colapsa.
+          Prueba experimentos interactivos de sistemas complejos: ajusta
+          parámetros, perturba el sistema y observa cómo emerge el orden — o
+          colapsa.
         </p>
       </header>
 
@@ -106,14 +107,15 @@ export function Dashboard({ onOpen }: { onOpen: (v: View) => void }) {
                   onClick={() => m.view && onOpen(m.view)}
                 >
                   <div className="card-top">
-                    <span className="card-code">{m.code}</span>
+                    <span className="card-badge">Experimento</span>
                     <span className={`card-tag ${active ? 'on' : ''}`}>
-                      {active ? '● ACTIVO' : 'COMING SOON'}
+                      {active ? 'En vivo' : 'Próximamente'}
                     </span>
                   </div>
+                  <span className="card-code">{m.code}</span>
                   <h3>{m.title}</h3>
                   <p>{m.desc}</p>
-                  {active && <span className="card-cta">INICIAR SIMULACIÓN →</span>}
+                  {active && <span className="card-cta">Probar →</span>}
                 </button>
               );
             })}

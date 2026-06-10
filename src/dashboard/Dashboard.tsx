@@ -1,4 +1,5 @@
 import { View } from '../App';
+import { CardPreview } from './CardPreview';
 
 interface ModuleDef {
   code: string;
@@ -76,13 +77,11 @@ export function Dashboard({ onOpen }: { onOpen: (v: View) => void }) {
   return (
     <div className="dashboard">
       <header className="hero">
-        <p className="hero-kicker">ENTORNO DIDÁCTICO · APRENDIZAJE EMPÍRICO</p>
-        <h1>
-          Sistemas Complejos,<br />Redes <em>&amp;</em> Fenómenos Emergentes
-        </h1>
+        <p className="hero-kicker">Experimentos interactivos</p>
+        <h1>Experimentos de sistemas complejos</h1>
         <p className="hero-sub">
-          Laboratorio interactivo de simulación. Interviene los parámetros,
-          perturba el sistema y observa cómo el orden emerge — o colapsa.
+          Ajusta parámetros y perturba modelos de redes, autómatas y agentes
+          directamente en el navegador. Cada experimento corre en vivo.
         </p>
       </header>
 
@@ -105,15 +104,17 @@ export function Dashboard({ onOpen }: { onOpen: (v: View) => void }) {
                   disabled={!active}
                   onClick={() => m.view && onOpen(m.view)}
                 >
+                  <CardPreview code={m.code} />
                   <div className="card-top">
-                    <span className="card-code">{m.code}</span>
+                    <span className="card-badge">Experimento</span>
                     <span className={`card-tag ${active ? 'on' : ''}`}>
-                      {active ? '● ACTIVO' : 'COMING SOON'}
+                      {active ? 'En vivo' : 'Próximamente'}
                     </span>
                   </div>
+                  <span className="card-code">{m.code}</span>
                   <h3>{m.title}</h3>
                   <p>{m.desc}</p>
-                  {active && <span className="card-cta">INICIAR SIMULACIÓN →</span>}
+                  {active && <span className="card-cta">Probar →</span>}
                 </button>
               );
             })}

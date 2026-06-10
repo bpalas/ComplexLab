@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTheme } from './theme';
 import { Dashboard } from './dashboard/Dashboard';
 import { SandboxSim } from './modules/sandbox/SandboxSim';
 import { NetworkSim } from './modules/network/NetworkSim';
@@ -17,16 +18,16 @@ const NAV: { view: View; label: string }[] = [
 
 export function App() {
   const [view, setView] = useState<View>('dashboard');
+  const { theme, toggle } = useTheme();
 
   return (
     <div className="app">
       <header className="topbar">
         <button className="brand" onClick={() => setView('dashboard')}>
-          <span className="brand-dot" />
           <span className="brand-name">
-            COMPLEX<b>LABS</b>
+            Complex <b>Labs</b>
           </span>
-          <span className="brand-sub">SIMULACIÓN · SISTEMAS COMPLEJOS</span>
+          <span className="brand-sub">Sistemas complejos</span>
         </button>
         <nav>
           {NAV.map((n) => (
@@ -38,6 +39,14 @@ export function App() {
               {n.label}
             </button>
           ))}
+          <button
+            className="theme-toggle"
+            onClick={toggle}
+            aria-label={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+            title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+          >
+            {theme === 'dark' ? '☀' : '☾'}
+          </button>
         </nav>
       </header>
 
@@ -86,8 +95,8 @@ export function App() {
       </main>
 
       <footer className="footbar">
-        <span>COMPLEX LABS v1.0 — entorno didáctico de simulación</span>
-        <span>render: HTML5 Canvas + requestAnimationFrame</span>
+        <span className="foot-brand">Complex Labs</span>
+        <span>Simulaciones interactivas de sistemas complejos · render en HTML5 Canvas</span>
       </footer>
     </div>
   );

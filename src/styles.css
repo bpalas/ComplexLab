@@ -21,6 +21,22 @@
   --mono: 'IBM Plex Mono', monospace;
 }
 
+/* Modo claro — blanco frío técnico, coherente con la paleta fría del oscuro. */
+:root[data-theme='light'] {
+  --bg0: #f7f9fb;
+  --bg1: #eef2f6;
+  --panel: #ffffff;
+  --panel-2: #f4f7fa;
+  --line: rgba(22, 32, 42, 0.1);
+  --line-strong: rgba(22, 32, 42, 0.22);
+  --ink: #16202a;
+  --muted: #5c6b7a;
+  --cyan: #0c9b80;
+  --amber: #c9821a;
+  --blue: #1769d6;
+  --magenta: #d63b6e;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -42,53 +58,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Fondo: mesh-gradients orgánicos (blobs de la paleta) con deriva lenta.
-   Animación 100% CSS — sin JS ni requestAnimationFrame. */
-body::before,
-body::after {
-  content: '';
-  position: fixed;
-  inset: -22%;
-  pointer-events: none;
-  z-index: 0;
-  will-change: transform, opacity;
-}
-
-body::before {
-  background:
-    radial-gradient(36% 30% at 16% 20%, rgba(69, 230, 200, 0.13), transparent 70%),
-    radial-gradient(32% 28% at 84% 14%, rgba(74, 168, 255, 0.12), transparent 70%),
-    radial-gradient(34% 32% at 80% 84%, rgba(255, 93, 143, 0.09), transparent 70%),
-    radial-gradient(28% 26% at 14% 88%, rgba(255, 180, 84, 0.07), transparent 70%);
-  animation: meshDrift 36s ease-in-out infinite alternate;
-}
-
-body::after {
-  background:
-    radial-gradient(26% 24% at 56% 42%, rgba(74, 168, 255, 0.07), transparent 70%),
-    radial-gradient(22% 22% at 36% 72%, rgba(69, 230, 200, 0.06), transparent 70%),
-    radial-gradient(20% 20% at 70% 30%, rgba(255, 93, 143, 0.05), transparent 70%);
-  animation: meshBreath 26s ease-in-out infinite alternate;
-}
-
-@keyframes meshDrift {
-  0%   { transform: translate3d(-2%, -1.5%, 0) scale(1); opacity: 0.85; }
-  50%  { transform: translate3d(1.5%, 2%, 0) scale(1.06); opacity: 1; }
-  100% { transform: translate3d(-1%, 3%, 0) scale(1.02); opacity: 0.9; }
-}
-
-@keyframes meshBreath {
-  0%   { transform: translate3d(2%, 1%, 0) scale(1.04); opacity: 0.7; }
-  50%  { transform: translate3d(-1.5%, -2%, 0) scale(1); opacity: 1; }
-  100% { transform: translate3d(1%, -3%, 0) scale(1.05); opacity: 0.8; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  body::before,
-  body::after {
-    animation: none;
-  }
-}
 
 .app {
   position: relative;
@@ -119,8 +88,8 @@ button {
   gap: 20px;
   padding: 0 28px;
   height: 64px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  background: rgba(4, 7, 13, 0.7);
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg0) 78%, transparent);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   position: sticky;
@@ -146,11 +115,7 @@ button {
 
 .brand-name b {
   font-weight: 800;
-  background: linear-gradient(94deg, var(--cyan) 0%, var(--blue) 52%, var(--magenta) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+  color: var(--cyan);
 }
 
 .brand-sub {
@@ -189,6 +154,22 @@ button {
   font-weight: 700;
   background: linear-gradient(94deg, var(--cyan), var(--blue));
   border-color: transparent;
+}
+
+.theme-toggle {
+  font-size: 15px;
+  line-height: 1;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  transition: background-color 0.18s, border-color 0.18s;
+}
+
+.theme-toggle:hover {
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+  border-color: var(--line-strong);
 }
 
 .main {
@@ -312,11 +293,7 @@ button {
 
 .hero h1 em {
   font-style: normal;
-  background: linear-gradient(94deg, var(--cyan) 0%, var(--blue) 55%, var(--magenta) 110%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+  color: var(--cyan);
 }
 
 .hero-sub {
@@ -377,6 +354,19 @@ button {
   margin-top: 6px;
 }
 
+.card-preview {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #0a1018;
+  line-height: 0;
+}
+
+.card-preview canvas {
+  display: block;
+  width: 100%;
+}
+
 /* ── Tarjetas de experimento ── */
 
 .card-grid {
@@ -391,9 +381,7 @@ button {
   padding: 24px;
   border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 22px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015));
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: var(--panel);
   transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.25s, box-shadow 0.25s;
   display: flex;
   flex-direction: column;
@@ -402,30 +390,10 @@ button {
   overflow: hidden;
 }
 
-/* halo de gradiente en hover */
-.card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background:
-    radial-gradient(120% 90% at 85% -10%, color-mix(in srgb, var(--acc) 14%, transparent), transparent 60%),
-    radial-gradient(110% 80% at 0% 110%, color-mix(in srgb, var(--acc2) 10%, transparent), transparent 60%);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
 .card.live:hover {
   transform: translateY(-4px);
-  border-color: color-mix(in srgb, var(--acc) 40%, rgba(255, 255, 255, 0.1));
-  box-shadow:
-    0 20px 44px rgba(0, 0, 0, 0.45),
-    0 0 28px color-mix(in srgb, var(--acc) 14%, transparent);
-}
-
-.card.live:hover::before {
-  opacity: 1;
+  border-color: color-mix(in srgb, var(--acc) 40%, var(--line-strong));
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22);
 }
 
 .card.live:focus-visible {

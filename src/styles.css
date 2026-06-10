@@ -787,6 +787,58 @@ input[type='range']::-moz-range-thumb {
   gap: 5px;
 }
 
+/* Panel de fórmulas (PHY·01 copos de nieve) */
+
+.formula-panel {
+  margin-top: 14px;
+}
+
+.formula-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px;
+  margin-top: 4px;
+}
+
+.formula {
+  padding: 12px;
+  border: 1px dashed var(--line);
+}
+
+.formula .math {
+  display: block;
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 12.5px;
+  color: var(--cyan);
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+.formula h4 {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 6px;
+}
+
+.formula p {
+  font-size: 10.5px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.formula-foot {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line);
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.55;
+  max-width: 880px;
+}
+
 /* ── Módulo 2: coordinación emergente ────────────────────────────────── */
 
 .agents-layout {

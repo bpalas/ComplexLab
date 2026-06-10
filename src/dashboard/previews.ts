@@ -149,7 +149,7 @@ function paintBoids(ctx: CanvasRenderingContext2D, w: number, h: number): void {
 function paintSnowflake(ctx: CanvasRenderingContext2D, w: number, h: number): void {
   const eng = new SnowflakeEngine(42, 7);
   eng.journey = true;
-  for (let s = 0; s < 260 && !eng.done; s++) eng.step(DEFAULT_SNOW);
+  for (let s = 0; s < 1400 && !eng.done; s++) eng.step(DEFAULT_SNOW);
   eng.render(ctx, w, h);
 }
 

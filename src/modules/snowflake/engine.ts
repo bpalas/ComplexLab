@@ -31,10 +31,16 @@ export interface SnowStats {
   done: boolean;
 }
 
+/**
+ * Valores en el régimen dendrítico del diagrama (α, β, γ) de Reiter:
+ * β moderada y γ pequeña → las puntas crecen más rápido que las caras
+ * (inestabilidad de Mullins–Sekerka) y aparecen las seis ramas.
+ * γ grande rellena el cristal y lo convierte en una placa maciza.
+ */
 export const DEFAULT_SNOW: SnowParams = {
   alpha: 1.0,
-  beta: 0.55,
-  gamma: 0.006,
+  beta: 0.42,
+  gamma: 0.0004,
 };
 
 /** Vecindario axial de la red hexagonal. */
@@ -65,6 +71,7 @@ export class SnowflakeEngine {
   private valid: Uint8Array; // 1 si la celda pertenece al hexágono
   private receptive: Uint8Array;
   private edge: Uint8Array; // borde del mundo: reservorio de vapor
+  private freezeStep: Int32Array; // paso en el que cada celda se congeló
 
   /** Viaje atmosférico: deriva aleatoria de β y γ mientras el copo "cae". */
   journey = true;
@@ -86,6 +93,7 @@ export class SnowflakeEngine {
     this.valid = new Uint8Array(size);
     this.receptive = new Uint8Array(size);
     this.edge = new Uint8Array(size);
+    this.freezeStep = new Int32Array(size);
     this.seed = seed;
     this.curBeta = DEFAULT_SNOW.beta;
     this.curGamma = DEFAULT_SNOW.gamma;
@@ -122,9 +130,11 @@ export class SnowflakeEngine {
     this.curGamma = p.gamma;
     for (let k = 0; k < this.s.length; k++) {
       this.s[k] = this.valid[k] ? p.beta : 0;
+      this.freezeStep[k] = -1;
     }
     // Semilla: una celda congelada en el centro de la red
     this.s[this.idx(0, 0)] = 1;
+    this.freezeStep[this.idx(0, 0)] = 0;
   }
 
   /** Un paso del modelo de Reiter. */
@@ -135,8 +145,8 @@ export class SnowflakeEngine {
     // Deriva del viaje: el copo atraviesa capas de aire distintas.
     // La deriva es GLOBAL: cambia la forma, no rompe la simetría.
     if (this.journey) {
-      this.curBeta = clamp(this.curBeta + (this.rng() - 0.5) * 0.02, 0.3, 0.9);
-      this.curGamma = clamp(this.curGamma + (this.rng() - 0.5) * 0.0012, 0.0001, 0.015);
+      this.curBeta = clamp(this.curBeta + (this.rng() - 0.5) * 0.006, 0.32, 0.8);
+      this.curGamma = clamp(this.curGamma + (this.rng() - 0.5) * 0.00008, 0.00005, 0.0015);
     } else {
       this.curBeta = p.beta;
       this.curGamma = p.gamma;
@@ -180,6 +190,7 @@ export class SnowflakeEngine {
         }
         let val = (receptive[k] ? s[k] + gamma : 0) + u[k] + half * (sum - 6 * u[k]);
         if (edge[k]) val = Math.max(val, this.curBeta);
+        if (val >= 1 && this.freezeStep[k] < 0) this.freezeStep[k] = this.stepCount;
         this.s[k] = val;
       }
     }
@@ -241,18 +252,20 @@ export class SnowflakeEngine {
     const cy = h / 2;
     const px = Math.max(1.2, size * SQ3 * 0.95);
 
+    const now = Math.max(1, this.stepCount);
     for (let q = -R; q <= R; q++) {
       for (let r = -R; r <= R; r++) {
         const k = this.idx(q, r);
         if (!valid[k]) continue;
-        const v = s[k];
-        if (v < 1) continue;
+        if (s[k] < 1) continue;
         const x = cx + size * (SQ3 * q + (SQ3 / 2) * r);
         const y = cy + size * 1.5 * r;
-        // Hielo más grueso = más blanco; hielo nuevo = azul glaciar
-        const t = Math.min(1, (v - 1) * 0.9);
-        const ch = Math.round(170 + t * 85);
-        ctx.fillStyle = `rgb(${Math.round(120 + t * 135)},${ch},255)`;
+        // Hielo viejo (centro) = blanco; hielo recién congelado (puntas) = azul glaciar
+        const age = 1 - this.freezeStep[k] / now;
+        const t = Math.pow(Math.max(0, Math.min(1, age)), 0.7);
+        const rr2 = Math.round(140 + t * 115);
+        const gg = Math.round(190 + t * 65);
+        ctx.fillStyle = `rgb(${rr2},${gg},255)`;
         ctx.fillRect(x - px / 2, y - px / 2, px, px);
       }
     }

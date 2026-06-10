@@ -36,8 +36,8 @@ describe('SnowflakeEngine', () => {
     const b = new SnowflakeEngine(36, 22);
     a.journey = true;
     b.journey = true;
-    grow(a, 160);
-    grow(b, 160);
+    grow(a, 900);
+    grow(b, 900);
     expect(a.fingerprint()).not.toBe(b.fingerprint());
   });
 

@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { SnowflakeEngine, SnowParams, SnowStats, DEFAULT_SNOW } from './engine';
 import { Slider } from '../../components/Slider';
 
-const STEPS_PER_FRAME_BASE = 2;
+/** Pasos de simulación por segundo a velocidad 1× — lento a propósito:
+ *  el copo debe verse CRECER rama a rama, no aparecer como una nube. */
+const BASE_SPS = 30;
 
 /** Telemetría aislada del bucle de render. */
 function StatsOverlay({ engineRef }: { engineRef: React.RefObject<SnowflakeEngine | null> }) {
@@ -47,6 +49,8 @@ export function SnowflakeSim() {
     let raf = 0;
     let cssW = 0;
     let cssH = 0;
+    let last = performance.now();
+    let acc = 0; // acumulador de pasos fraccionarios
 
     const resize = () => {
       const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -61,10 +65,14 @@ export function SnowflakeSim() {
     const ro = new ResizeObserver(resize);
     ro.observe(stage);
 
-    const loop = () => {
+    const loop = (now: number) => {
+      const dt = Math.min(0.1, (now - last) / 1000);
+      last = now;
       if (playingRef.current && !engine.done) {
-        const n = Math.max(1, Math.round(STEPS_PER_FRAME_BASE * speedRef.current));
-        for (let i = 0; i < n; i++) engine.step(paramsRef.current);
+        acc += dt * BASE_SPS * speedRef.current;
+        let n = Math.min(40, Math.floor(acc));
+        acc -= Math.floor(acc);
+        while (n-- > 0) engine.step(paramsRef.current);
       }
       engine.render(ctx, cssW, cssH);
       raf = requestAnimationFrame(loop);
@@ -91,6 +99,7 @@ export function SnowflakeSim() {
   };
 
   return (
+    <>
     <div className="module-grid">
       <aside className="panel side-panel">
         <h2 className="panel-title">Atmósfera local</h2>
@@ -111,8 +120,8 @@ export function SnowflakeSim() {
         />
         <Slider
           label="Humedad de fondo (β)"
-          min={0.3}
-          max={0.9}
+          min={0.32}
+          max={0.8}
           step={0.01}
           defaultValue={DEFAULT_SNOW.beta}
           onInput={(v) => (paramsRef.current.beta = v)}
@@ -120,23 +129,23 @@ export function SnowflakeSim() {
         />
         <Slider
           label="Deposición (γ)"
-          min={0.0001}
-          max={0.015}
-          step={0.0001}
+          min={0.00005}
+          max={0.0015}
+          step={0.00005}
           defaultValue={DEFAULT_SNOW.gamma}
           format={(v) => `${(v * 1000).toFixed(2)}‰`}
           onInput={(v) => (paramsRef.current.gamma = v)}
-          hint="Vapor que se adhiere al borde del cristal en cada paso."
+          hint="Vapor que se adhiere al cristal. Pequeña → ramas finas; grande → placa maciza."
         />
         <Slider
           label="Velocidad"
-          min={0.5}
-          max={6}
-          step={0.5}
+          min={0.25}
+          max={4}
+          step={0.25}
           defaultValue={1}
-          format={(v) => `${v.toFixed(1)}×`}
+          format={(v) => `${v.toFixed(2)}×`}
           onInput={(v) => (speedRef.current = v)}
-          hint="Pasos de simulación por fotograma."
+          hint="A 1× el copo tarda ~1 minuto en crecer: míralo ramificarse."
         />
 
         <h2 className="panel-title">El viaje del copo</h2>
@@ -197,5 +206,61 @@ export function SnowflakeSim() {
         </div>
       </section>
     </div>
+
+    <section className="panel formula-panel">
+      <h2 className="panel-title">Las matemáticas del copo, en fácil</h2>
+      <p className="panel-sub">
+        Cada celda de la red hexagonal guarda un número s: cuánta agua hay ahí.
+        Si s ≥ 1, la celda es hielo. Todo el copo sale de repetir estas cuatro
+        reglas, una y otra vez:
+      </p>
+      <div className="formula-grid">
+        <div className="formula">
+          <code className="math">receptiva ⇔ s ≥ 1 ó un vecino tiene s ≥ 1</code>
+          <h4>1 · ¿Quién puede congelarse?</h4>
+          <p>
+            Solo las celdas que tocan el cristal son «receptivas»: el vapor que
+            les llega ya no se escapa. Las 6 vecinas de la red hexagonal son las
+            6 direcciones del hielo Ih — aquí nace la simetría.
+          </p>
+        </div>
+        <div className="formula">
+          <code className="math">u′ = u + (α/12) · (Σ u<sub>vecinas</sub> − 6u)</code>
+          <h4>2 · El vapor viaja (difusión)</h4>
+          <p>
+            Es la ley de Fick discreta: el agua de las celdas NO receptivas
+            fluye de donde hay más hacia donde hay menos. α dice qué tan rápido.
+            Cada celda se compara con el promedio de sus 6 vecinas.
+          </p>
+        </div>
+        <div className="formula">
+          <code className="math">v′ = v + γ &nbsp;&nbsp;·&nbsp;&nbsp; s′ = u′ + v′</code>
+          <h4>3 · Lo que toca, se pega (deposición)</h4>
+          <p>
+            Las celdas receptivas suman γ en cada paso: vapor que se deposita
+            como hielo y ya no difunde. Cuando la suma s′ cruza 1, la celda se
+            congela para siempre. γ pequeña → ramas finas; γ grande → placa.
+          </p>
+        </div>
+        <div className="formula">
+          <code className="math">β(t+1) = β(t) + ruido &nbsp;·&nbsp; γ(t+1) = γ(t) + ruido</code>
+          <h4>4 · El viaje hace único al copo</h4>
+          <p>
+            Mientras cae, el copo cruza capas de aire con otra temperatura y
+            humedad: β y γ caminan al azar. Como el copo mide ~1 mm, sus 6 ramas
+            viven el MISMO viaje → único pero simétrico. Ningún camino se
+            repite, ningún copo tampoco.
+          </p>
+        </div>
+      </div>
+      <p className="formula-foot">
+        ¿Y por qué salen ramas y no un círculo? Una punta que sobresale «ve» más
+        vapor a su alrededor que una cara plana, así que crece más rápido y
+        sobresale aún más (inestabilidad de Mullins–Sekerka). La regla 2 la
+        alimenta y la regla 3 la congela: amplificación de una fluctuación —
+        emergencia pura.
+      </p>
+    </section>
+    </>
   );
 }

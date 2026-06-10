@@ -24,9 +24,9 @@ export function App() {
         <button className="brand" onClick={() => setView('dashboard')}>
           <span className="brand-dot" />
           <span className="brand-name">
-            CHRONOS<b>CORTEX</b>
+            COMPLEX<b>LABS</b>
           </span>
-          <span className="brand-sub">LAB · SISTEMAS COMPLEJOS</span>
+          <span className="brand-sub">SIMULACIÓN · SISTEMAS COMPLEJOS</span>
         </button>
         <nav>
           {NAV.map((n) => (
@@ -86,7 +86,7 @@ export function App() {
       </main>
 
       <footer className="footbar">
-        <span>CHRONOSCORTEX v1.0 — entorno didáctico de simulación</span>
+        <span>COMPLEX LABS v1.0 — entorno didáctico de simulación</span>
         <span>render: HTML5 Canvas + requestAnimationFrame</span>
       </footer>
     </div>

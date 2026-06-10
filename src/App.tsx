@@ -3,14 +3,16 @@ import { Dashboard } from './dashboard/Dashboard';
 import { SandboxSim } from './modules/sandbox/SandboxSim';
 import { NetworkSim } from './modules/network/NetworkSim';
 import { AgentsSim } from './modules/agents/AgentsSim';
+import { CellularSim } from './modules/cellular/CellularSim';
 
-export type View = 'dashboard' | 'laboratorio' | 'red' | 'agentes';
+export type View = 'dashboard' | 'laboratorio' | 'red' | 'agentes' | 'celular';
 
 const NAV: { view: View; label: string }[] = [
   { view: 'dashboard', label: 'PANEL' },
   { view: 'laboratorio', label: 'MÓDULO · 2 NODOS' },
   { view: 'red', label: 'MÓDULO · RED HEBBIANA' },
   { view: 'agentes', label: 'MÓDULO · COORDINACIÓN' },
+  { view: 'celular', label: 'MÓDULO · AUTÓMATAS' },
 ];
 
 export function App() {
@@ -69,6 +71,16 @@ export function App() {
               sub="4 agentes autónomos · sin comunicación directa · descomposición PID"
             />
             <AgentsSim />
+          </>
+        )}
+        {view === 'celular' && (
+          <>
+            <ModuleHeader
+              code="NET·03"
+              title="Autómatas Celulares Elementales"
+              sub="256 reglas de Wolfram · 4 clases de complejidad · frontera toroidal"
+            />
+            <CellularSim />
           </>
         )}
       </main>

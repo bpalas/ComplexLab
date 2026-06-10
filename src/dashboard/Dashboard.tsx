@@ -41,7 +41,8 @@ const CATEGORIES: CategoryDef[] = [
       {
         code: 'NET·03',
         title: 'Autómatas Celulares',
-        desc: 'Computación emergente sobre retículas de estados discretos.',
+        desc: 'Construye una regla local de 8 bits y observa las cuatro clases de Wolfram: orden, fractales, caos y computación al borde del caos.',
+        view: 'celular',
       },
     ],
   },

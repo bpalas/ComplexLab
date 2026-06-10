@@ -8,13 +8,6 @@ import { CellularSim } from './modules/cellular/CellularSim';
 
 export type View = 'dashboard' | 'laboratorio' | 'red' | 'agentes' | 'celular';
 
-const NAV: { view: View; label: string }[] = [
-  { view: 'dashboard', label: 'PANEL' },
-  { view: 'laboratorio', label: 'MÓDULO · 2 NODOS' },
-  { view: 'red', label: 'MÓDULO · RED HEBBIANA' },
-  { view: 'agentes', label: 'MÓDULO · COORDINACIÓN' },
-  { view: 'celular', label: 'MÓDULO · AUTÓMATAS' },
-];
 
 export function App() {
   const [view, setView] = useState<View>('dashboard');
@@ -30,15 +23,6 @@ export function App() {
           <span className="brand-sub">Sistemas complejos</span>
         </button>
         <nav>
-          {NAV.map((n) => (
-            <button
-              key={n.view}
-              className={`nav-btn ${view === n.view ? 'active' : ''}`}
-              onClick={() => setView(n.view)}
-            >
-              {n.label}
-            </button>
-          ))}
           <button
             className="theme-toggle"
             onClick={toggle}

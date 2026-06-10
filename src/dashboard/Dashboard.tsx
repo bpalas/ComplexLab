@@ -91,6 +91,25 @@ const CATEGORIES: CategoryDef[] = [
       },
     ],
   },
+  {
+    index: '04',
+    name: 'Aprendizaje por Refuerzo',
+    blurb:
+      'Agentes que aprenden por ensayo y error: sin maestro ni ejemplos, solo recompensas. La matemática expuesta: ecuación de Bellman, error TD como pérdida y el dilema exploración/explotación.',
+    modules: [
+      {
+        code: 'RL·01',
+        title: 'La Caza del Rey (Q-learning)',
+        desc: 'Un caballo aprende a capturar a un rey errante en un tablero 5×5. Tabla Q de 625 estados, mapa de valor en vivo y la actualización de Bellman número a número.',
+        view: 'ajedrez',
+      },
+      {
+        code: 'RL·02',
+        title: 'Bandidos Multibrazo',
+        desc: 'El dilema exploración/explotación en su forma mínima: tragamonedas con pagos ocultos.',
+      },
+    ],
+  },
 ];
 
 export function Dashboard({ onOpen }: { onOpen: (v: View) => void }) {

@@ -7,6 +7,7 @@ describe('previewKindFor', () => {
     expect(previewKindFor('NET·01')).toBe('network');
     expect(previewKindFor('NET·03')).toBe('cellular');
     expect(previewKindFor('AGI·01')).toBe('agents');
+    expect(previewKindFor('RL·01')).toBe('chessrl');
   });
 
   it('mapea los módulos "Próximamente" a motivos generativos', () => {

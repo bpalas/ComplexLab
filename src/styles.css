@@ -1672,3 +1672,86 @@ input[type='range']::-moz-range-thumb {
   border-color: #56e8d5;
   color: #56e8d5;
 }
+
+/* ── Módulo RL·01: la caza del rey (Q-learning) ─────────────────────────── */
+
+.chessrl-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.chessrl-stage {
+  position: relative;
+  border: 1px solid var(--line);
+  background: radial-gradient(ellipse 75% 75% at 50% 45%, #0a1322 0%, #060b14 70%, #04070d 100%);
+}
+
+.chessrl-stage canvas {
+  display: block;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  aspect-ratio: 1;
+}
+
+.chessrl-speeds {
+  margin: 4px 0 14px;
+}
+
+.chessrl-math .eq {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: var(--ink);
+  margin: 8px 0;
+  letter-spacing: 0.02em;
+}
+
+.chessrl-math .eq-general {
+  color: var(--muted);
+  border: 1px dashed var(--line);
+  padding: 8px 10px;
+  display: inline-block;
+}
+
+.chessrl-math .eq-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 36px;
+}
+
+.chessrl-math .eq-note {
+  color: var(--muted);
+  font-size: 10px;
+  margin-left: 8px;
+  letter-spacing: 0.08em;
+}
+
+.chessrl-math .eq-meta {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  margin-top: 8px;
+}
+
+.chessrl-math .v-q { color: var(--cyan); }
+.chessrl-math .v-a { color: var(--amber); }
+.chessrl-math .v-r { color: #ff5d8f; }
+.chessrl-math .v-g { color: #4aa8ff; }
+.chessrl-math .v-d {
+  color: var(--amber);
+  text-shadow: 0 0 8px rgba(255, 180, 84, 0.4);
+}
+
+.chessrl-charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .chessrl-charts {
+    grid-template-columns: 1fr;
+  }
+}

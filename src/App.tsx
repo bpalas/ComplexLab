@@ -7,8 +7,9 @@ import { AgentsSim } from './modules/agents/AgentsSim';
 import { CellularSim } from './modules/cellular/CellularSim';
 import { BoidsSim } from './modules/boids/BoidsSim';
 import { SnowflakeSim } from './modules/snowflake/SnowflakeSim';
+import { ChessRLSim } from './modules/chessrl/ChessRLSim';
 
-export type View = 'dashboard' | 'laboratorio' | 'red' | 'agentes' | 'celular' | 'boids' | 'nieve';
+export type View = 'dashboard' | 'laboratorio' | 'red' | 'agentes' | 'celular' | 'boids' | 'nieve' | 'ajedrez';
 
 
 export function App() {
@@ -76,6 +77,16 @@ export function App() {
               sub="4 agentes autónomos · sin comunicación directa · descomposición PID"
             />
             <AgentsSim />
+          </>
+        )}
+        {view === 'ajedrez' && (
+          <>
+            <ModuleHeader
+              code="RL·01"
+              title="La Caza del Rey · Q-learning por Ensayo y Error"
+              sub="Ecuación de Bellman en vivo · error TD como pérdida · política ε-greedy"
+            />
+            <ChessRLSim />
           </>
         )}
         {view === 'celular' && (

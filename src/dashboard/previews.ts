@@ -4,6 +4,13 @@ import { SandboxEngine, DEFAULT_PARAMS } from '../modules/sandbox/engine';
 import { CoordinationEngine, AGENTS } from '../modules/agents/engine';
 import { BoidsEngine, DEFAULT_BOIDS } from '../modules/boids/engine';
 import { SnowflakeEngine, DEFAULT_SNOW } from '../modules/snowflake/engine';
+import {
+  BOARD,
+  ChessRLEngine,
+  DEFAULT_RL,
+  mulberry32 as chessRng,
+  xyOf,
+} from '../modules/chessrl/engine';
 
 export type PreviewKind =
   | 'synapse'
@@ -15,6 +22,8 @@ export type PreviewKind =
   | 'swarm'
   | 'cascade'
   | 'attention'
+  | 'chessrl'
+  | 'bandit'
   | 'generic';
 
 const KIND_BY_CODE: Record<string, PreviewKind> = {
@@ -27,6 +36,8 @@ const KIND_BY_CODE: Record<string, PreviewKind> = {
   'AGI·02': 'cascade',
   'AGI·03': 'attention',
   'PHY·01': 'snowflake',
+  'RL·01': 'chessrl',
+  'RL·02': 'bandit',
 };
 
 export function previewKindFor(code: string): PreviewKind {
@@ -241,6 +252,70 @@ function paintAttention(ctx: CanvasRenderingContext2D, w: number, h: number): vo
   }
 }
 
+/** RL·01 — Q-learning real: tablero 5×5 con mapa de valor tras entrenar. */
+function paintChessRL(ctx: CanvasRenderingContext2D, w: number, h: number): void {
+  ctx.fillStyle = BG;
+  ctx.fillRect(0, 0, w, h);
+  const eng = new ChessRLEngine(chessRng(9));
+  for (let e = 0; e < 350; e++) eng.runEpisode(DEFAULT_RL);
+
+  const cell = Math.min(w, h) / (BOARD + 0.6);
+  const ox = (w - cell * BOARD) / 2;
+  const oy = (h - cell * BOARD) / 2;
+
+  let vMin = Infinity;
+  let vMax = -Infinity;
+  const values = new Float32Array(BOARD * BOARD);
+  for (let c = 0; c < BOARD * BOARD; c++) {
+    values[c] = c === eng.king ? 0 : eng.valueOf(c, eng.king);
+    if (c !== eng.king) {
+      vMin = Math.min(vMin, values[c]);
+      vMax = Math.max(vMax, values[c]);
+    }
+  }
+  const span = Math.max(1e-6, vMax - vMin);
+  for (let c = 0; c < BOARD * BOARD; c++) {
+    const [x, y] = xyOf(c);
+    ctx.fillStyle = (x + y) % 2 === 0 ? '#121b29' : '#0b1220';
+    ctx.fillRect(ox + x * cell, oy + y * cell, cell, cell);
+    if (c !== eng.king) {
+      const t = (values[c] - vMin) / span;
+      ctx.fillStyle = `rgba(69, 230, 200, ${0.05 + 0.45 * t})`;
+      ctx.fillRect(ox + x * cell, oy + y * cell, cell, cell);
+    }
+  }
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = `${cell * 0.62}px serif`;
+  const [kgx, kgy] = xyOf(eng.king);
+  const [knx, kny] = xyOf(eng.knight);
+  ctx.fillStyle = '#ff5d8f';
+  ctx.fillText('♚', ox + kgx * cell + cell / 2, oy + kgy * cell + cell / 2 + 2);
+  ctx.fillStyle = '#e8f6f2';
+  ctx.fillText('♞', ox + knx * cell + cell / 2, oy + kny * cell + cell / 2 + 2);
+}
+
+/** RL·02 — bandidos: palancas con pagos ocultos y barras de estimación. */
+function paintBandit(ctx: CanvasRenderingContext2D, w: number, h: number): void {
+  ctx.fillStyle = BG;
+  ctx.fillRect(0, 0, w, h);
+  const rng = mulberry32(13);
+  const n = 6;
+  const bw = w / n;
+  for (let i = 0; i < n; i++) {
+    const truth = 0.25 + rng() * 0.6;
+    const est = truth + (rng() - 0.5) * 0.3;
+    const bh = est * h * 0.7;
+    ctx.fillStyle = i === 2 ? '#ffb454' : 'rgba(74, 168, 255, 0.4)';
+    ctx.fillRect(i * bw + bw * 0.22, h - bh, bw * 0.56, bh);
+    ctx.strokeStyle = 'rgba(69, 230, 200, 0.7)';
+    ctx.beginPath();
+    ctx.moveTo(i * bw + bw * 0.15, h - truth * h * 0.7);
+    ctx.lineTo((i + 1) * bw - bw * 0.15, h - truth * h * 0.7);
+    ctx.stroke();
+  }
+}
+
 function paintGeneric(ctx: CanvasRenderingContext2D, w: number, h: number): void {
   ctx.fillStyle = BG;
   ctx.fillRect(0, 0, w, h);
@@ -263,6 +338,8 @@ const PAINTERS: Record<PreviewKind, (ctx: CanvasRenderingContext2D, w: number, h
   swarm: paintSwarm,
   cascade: paintCascade,
   attention: paintAttention,
+  chessrl: paintChessRL,
+  bandit: paintBandit,
   generic: paintGeneric,
 };
 

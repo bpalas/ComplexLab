@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTheme } from './theme';
 import { Dashboard } from './dashboard/Dashboard';
 import { SandboxSim } from './modules/sandbox/SandboxSim';
 import { NetworkSim } from './modules/network/NetworkSim';
@@ -17,6 +18,7 @@ const NAV: { view: View; label: string }[] = [
 
 export function App() {
   const [view, setView] = useState<View>('dashboard');
+  const { theme, toggle } = useTheme();
 
   return (
     <div className="app">
@@ -37,6 +39,14 @@ export function App() {
               {n.label}
             </button>
           ))}
+          <button
+            className="theme-toggle"
+            onClick={toggle}
+            aria-label={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+            title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+          >
+            {theme === 'dark' ? '☀' : '☾'}
+          </button>
         </nav>
       </header>
 

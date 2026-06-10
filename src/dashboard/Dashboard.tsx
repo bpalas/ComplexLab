@@ -1,4 +1,5 @@
 import { View } from '../App';
+import { CardPreview } from './CardPreview';
 
 interface ModuleDef {
   code: string;
@@ -76,14 +77,11 @@ export function Dashboard({ onOpen }: { onOpen: (v: View) => void }) {
   return (
     <div className="dashboard">
       <header className="hero">
-        <p className="hero-kicker">Complexity Labs · Experimentos</p>
-        <h1>
-          Juega con la <em>complejidad</em>
-        </h1>
+        <p className="hero-kicker">Experimentos interactivos</p>
+        <h1>Experimentos de sistemas complejos</h1>
         <p className="hero-sub">
-          Prueba experimentos interactivos de sistemas complejos: ajusta
-          parámetros, perturba el sistema y observa cómo emerge el orden — o
-          colapsa.
+          Ajusta parámetros y perturba modelos de redes, autómatas y agentes
+          directamente en el navegador. Cada experimento corre en vivo.
         </p>
       </header>
 
@@ -106,6 +104,7 @@ export function Dashboard({ onOpen }: { onOpen: (v: View) => void }) {
                   disabled={!active}
                   onClick={() => m.view && onOpen(m.view)}
                 >
+                  <CardPreview code={m.code} />
                   <div className="card-top">
                     <span className="card-badge">Experimento</span>
                     <span className={`card-tag ${active ? 'on' : ''}`}>

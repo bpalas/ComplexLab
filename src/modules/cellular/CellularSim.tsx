@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { ElementaryCA, SeedMode } from './engine';
 import { Slider } from '../../components/Slider';
+import { TimeControls } from '../../components/TimeControls';
+import { useSimLoop } from '../../lib/useSimLoop';
 
 const CELLS = 360; // células por fila
 const SCALE = 3; // px internos por célula
@@ -25,15 +27,10 @@ export function CellularSim() {
   const engineRef = useRef<ElementaryCA | null>(null);
   const yRef = useRef(0); // fila de pintado actual
   const accRef = useRef(0); // acumulador de generaciones fraccionarias
-  const speedRef = useRef(1);
   const densityRef = useRef(0.5);
   const seedModeRef = useRef<SeedMode>('single');
-  const playingRef = useRef(true);
-  const stepOnceRef = useRef(false);
 
   const [rule, setRuleUI] = useState(110);
-  const [playing, setPlaying] = useState(true);
-  const [speed, setSpeed] = useState(1);
   const [seedMode, setSeedMode] = useState<SeedMode>('single');
 
   if (!engineRef.current) engineRef.current = new ElementaryCA(CELLS, 110);
@@ -72,32 +69,35 @@ export function CellularSim() {
     clearTapestry();
   };
 
+  const { playing, setPlaying, stepOnce, speedRef } = useSimLoop(
+    (dt) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d')!;
+      const engine = engineRef.current!;
+      accRef.current += dt * BASE_GPS * speedRef.current;
+      // Tope de generaciones por frame para no congelar la UI a 8×
+      let n = Math.min(64, Math.floor(accRef.current));
+      accRef.current -= Math.floor(accRef.current);
+      while (n-- > 0) paintRow(ctx, engine.step());
+    },
+    // onStep: un solo paso manual
+    () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d')!;
+      paintRow(ctx, engineRef.current!.step());
+    },
+    { initialPlaying: true },
+  );
+
   useEffect(() => {
-    const canvas = canvasRef.current!;
-    const ctx = canvas.getContext('2d')!;
-    const engine = engineRef.current!;
-    let raf = 0;
-    let last = performance.now();
+    speedRef.current = 1;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
+  useEffect(() => {
     clearTapestry();
-
-    const loop = (now: number) => {
-      const dt = Math.min(0.05, (now - last) / 1000);
-      last = now;
-      if (playingRef.current) {
-        accRef.current += dt * BASE_GPS * speedRef.current;
-        // Tope de generaciones por frame para no congelar la UI a 8×
-        let n = Math.min(64, Math.floor(accRef.current));
-        accRef.current -= Math.floor(accRef.current);
-        while (n-- > 0) paintRow(ctx, engine.step());
-      } else if (stepOnceRef.current) {
-        stepOnceRef.current = false;
-        paintRow(ctx, engine.step());
-      }
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -111,9 +111,11 @@ export function CellularSim() {
     setRuleUI(engineRef.current!.rule);
   };
 
-  const setPlay = (p: boolean) => {
-    playingRef.current = p;
-    setPlaying(p);
+  const [speed, setSpeedState] = useState(1);
+
+  const handleSpeed = (s: number) => {
+    speedRef.current = s;
+    setSpeedState(s);
   };
 
   return (
@@ -189,37 +191,17 @@ export function CellularSim() {
         />
 
         <h2 className="panel-title">Control de tiempo</h2>
-        <div className="btn-stack">
-          <button className="btn" onClick={() => setPlay(!playing)}>
-            {playing ? '❚❚ Pausa' : '▶ Reproducir'}
-          </button>
-          <button
-            className="btn"
-            onClick={() => {
-              setPlay(false);
-              stepOnceRef.current = true;
-            }}
-          >
-            ⇥ Paso a paso (+1 generación)
-          </button>
-          <button className="btn" onClick={reseed}>
-            ↺ Reiniciar tapiz
-          </button>
-        </div>
-        <div className="ca-speeds">
-          {SPEEDS.map((s) => (
-            <button
-              key={s}
-              className={`btn ca-chip ${speed === s ? 'active' : ''}`}
-              onClick={() => {
-                speedRef.current = s;
-                setSpeed(s);
-              }}
-            >
-              {s}×
-            </button>
-          ))}
-        </div>
+        <TimeControls
+          playing={playing}
+          onPlayToggle={() => setPlaying(!playing)}
+          onStep={stepOnce}
+          onReset={reseed}
+          speeds={SPEEDS}
+          speed={speed}
+          onSpeed={handleSpeed}
+          stepLabel="⇥ Paso a paso (+1 generación)"
+          resetLabel="↺ Reiniciar tapiz"
+        />
 
         <div className="didactic-note">
           <h3>Guía didáctica</h3>

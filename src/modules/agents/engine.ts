@@ -10,6 +10,8 @@
 //     (estructura conjunta que ningún agente individual explica).
 // ============================================================================
 
+import { Rng } from '../../lib/rng';
+
 export type AgentMode = 'homogeneo' | 'especializacion' | 'inferencia';
 
 export const N_OPTIONS = 6;
@@ -65,7 +67,7 @@ const METRIC_WINDOW = 14;
 const LOCKOUT_ROUNDS = 10;
 const MC_SAMPLES = 260;
 
-function argmaxTie(scores: number[], allowed: boolean[], focal: boolean): number {
+function argmaxTie(scores: number[], allowed: boolean[], focal: boolean, rng: Rng = Math.random): number {
   let best = -Infinity;
   const ties: number[] = [];
   for (let i = 0; i < scores.length; i++) {
@@ -81,7 +83,7 @@ function argmaxTie(scores: number[], allowed: boolean[], focal: boolean): number
   if (!ties.length) return -1;
   // Punto focal (convención compartida tipo Schelling): el índice más bajo.
   if (focal) return ties[0];
-  return ties[Math.floor(Math.random() * ties.length)];
+  return ties[Math.floor(rng() * ties.length)];
 }
 
 export class CoordinationEngine {
@@ -94,6 +96,11 @@ export class CoordinationEngine {
   inference: number[][] = Array.from({ length: N_AGENTS }, () => new Array(N_AGENTS).fill(0));
 
   private smooth = { synergy: 0, redundancy: 0, actual: 0 };
+  private rng: Rng;
+
+  constructor(rng: Rng = Math.random) {
+    this.rng = rng;
+  }
 
   reset(): void {
     this.history = [];
@@ -122,8 +129,8 @@ export class CoordinationEngine {
   private randomEnabled(): number {
     const opts: number[] = [];
     for (let o = 0; o < N_OPTIONS; o++) if (this.enabled(o)) opts.push(o);
-    if (!opts.length) return Math.floor(Math.random() * N_OPTIONS);
-    return opts[Math.floor(Math.random() * opts.length)];
+    if (!opts.length) return Math.floor(this.rng() * N_OPTIONS);
+    return opts[Math.floor(this.rng() * opts.length)];
   }
 
   private last(): RoundRecord | null {
@@ -134,7 +141,7 @@ export class CoordinationEngine {
   private modeOf(choices: number[]): number {
     const counts = new Array(N_OPTIONS).fill(0);
     for (const c of choices) if (c >= 0 && this.enabled(c)) counts[c]++;
-    const pick = argmaxTie(counts, this.enabledMask(), false);
+    const pick = argmaxTie(counts, this.enabledMask(), false, this.rng);
     return pick >= 0 && counts[pick] > 0 ? pick : this.randomEnabled();
   }
 
@@ -164,7 +171,7 @@ export class CoordinationEngine {
   /** Modo homogéneo: regla plana e idéntica para los 4 agentes. */
   private decideHomogeneo(): number {
     const last = this.last();
-    if (!last || Math.random() < 0.28) return this.randomEnabled();
+    if (!last || this.rng() < 0.28) return this.randomEnabled();
     return this.modeOf(last.choices);
   }
 
@@ -174,25 +181,25 @@ export class CoordinationEngine {
     switch (i) {
       case 0: {
         // Analítico — frecuencia de cada opción ponderada por el éxito grupal
-        if (!this.history.length || Math.random() < 0.06) return this.randomEnabled();
+        if (!this.history.length || this.rng() < 0.06) return this.randomEnabled();
         const scores = new Array(N_OPTIONS).fill(0);
         for (const r of this.history.slice(-20)) {
           for (const c of r.choices) {
             if (this.enabled(c)) scores[c] += r.score + 0.05;
           }
         }
-        const pick = argmaxTie(scores, this.enabledMask(), false);
+        const pick = argmaxTie(scores, this.enabledMask(), false, this.rng);
         return pick >= 0 ? pick : this.randomEnabled();
       }
       case 1: {
         // Explorador — alta probabilidad de muestreo aleatorio
-        if (!last || Math.random() < 0.45) return this.randomEnabled();
+        if (!last || this.rng() < 0.45) return this.randomEnabled();
         return this.modeOf(last.choices);
       }
       case 2: {
         // Conservador — persiste salvo fallo sostenido del grupo
         const mine = last ? last.choices[2] : -1;
-        if (last && mine >= 0 && this.enabled(mine) && Math.random() > 0.04) {
+        if (last && mine >= 0 && this.enabled(mine) && this.rng() > 0.04) {
           const recent = this.history.slice(-3);
           const failing = recent.length === 3 && recent.every((r) => r.score < 0.55);
           if (!failing) return mine;
@@ -202,7 +209,7 @@ export class CoordinationEngine {
       }
       default: {
         // Sintetizador — moda de las mayorías recientes
-        if (!this.history.length || Math.random() < 0.1) return this.randomEnabled();
+        if (!this.history.length || this.rng() < 0.1) return this.randomEnabled();
         const majors = this.history
           .slice(-3)
           .map((r) => r.majority)
@@ -226,8 +233,8 @@ export class CoordinationEngine {
       this.inference[i][j] = Math.max(...pred);
       for (let o = 0; o < N_OPTIONS; o++) sums[o] += pred[o];
     }
-    if (Math.random() < 0.03) return this.randomEnabled();
-    const pick = argmaxTie(sums, this.enabledMask(), true);
+    if (this.rng() < 0.03) return this.randomEnabled();
+    const pick = argmaxTie(sums, this.enabledMask(), true, this.rng);
     return pick >= 0 ? pick : this.randomEnabled();
   }
 
@@ -249,7 +256,7 @@ export class CoordinationEngine {
 
     const counts = new Array(N_OPTIONS).fill(0);
     for (const c of choices) if (this.enabled(c)) counts[c]++;
-    const majority = argmaxTie(counts, this.enabledMask(), true);
+    const majority = argmaxTie(counts, this.enabledMask(), true, this.rng);
     const top = majority >= 0 ? counts[majority] : 0;
     const score = top >= 2 ? top / N_AGENTS : 0;
     const perfect = top === N_AGENTS;
@@ -317,7 +324,7 @@ export class CoordinationEngine {
     const draw = new Array(N_AGENTS).fill(0);
     for (let s = 0; s < MC_SAMPLES; s++) {
       for (let i = 0; i < N_AGENTS; i++) {
-        const u = Math.random();
+        const u = this.rng();
         const cdf = cdfs[i];
         let c = 0;
         while (c < N_OPTIONS - 1 && u > cdf[c]) c++;

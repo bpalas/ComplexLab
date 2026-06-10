@@ -4,6 +4,8 @@
 // (los sliders escriben sobre el objeto NetParams sin pasar por React).
 // ============================================================================
 
+import { Rng } from '../../lib/rng';
+
 export interface NetParams {
   /** Nivel de señal acumulada necesario para que un nodo dispare. */
   threshold: number;
@@ -70,11 +72,11 @@ const INITIAL_W = 0.16;
 const MAX_PULSES = 3500;
 const LEAK = 1.1; // fuga de activación de los nodos (1/s)
 
-function gaussian(): number {
+function gaussian(rng: Rng): number {
   let u = 0;
   let v = 0;
-  while (u === 0) u = Math.random();
-  while (v === 0) v = Math.random();
+  while (u === 0) u = rng();
+  while (v === 0) v = rng();
   return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
 }
 
@@ -88,8 +90,10 @@ export class HebbianNetwork {
   fps = 60;
   brush = { x: 0, y: 0, active: false };
   private fireTimes: number[] = [];
+  private rng: Rng;
 
-  constructor() {
+  constructor(rng: Rng = Math.random) {
+    this.rng = rng;
     this.reset();
   }
 
@@ -102,9 +106,9 @@ export class HebbianNetwork {
     this.fireTimes = [];
 
     const centers = Array.from({ length: CLUSTERS }, () => {
-      const r = 0.62 * Math.cbrt(Math.random());
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
+      const r = 0.62 * Math.cbrt(this.rng());
+      const theta = this.rng() * Math.PI * 2;
+      const phi = Math.acos(2 * this.rng() - 1);
       return {
         x: r * Math.sin(phi) * Math.cos(theta),
         y: r * Math.sin(phi) * Math.sin(theta),
@@ -114,9 +118,9 @@ export class HebbianNetwork {
 
     for (let i = 0; i < NODE_COUNT; i++) {
       const c = centers[i % CLUSTERS];
-      let x = c.x + gaussian() * 0.27;
-      let y = c.y + gaussian() * 0.27;
-      let z = c.z + gaussian() * 0.27;
+      let x = c.x + gaussian(this.rng) * 0.27;
+      let y = c.y + gaussian(this.rng) * 0.27;
+      let z = c.z + gaussian(this.rng) * 0.27;
       const d = Math.hypot(x, y, z);
       if (d > 1) {
         x /= d;
@@ -140,7 +144,7 @@ export class HebbianNetwork {
       const key = Math.min(a, b) * NODE_COUNT + Math.max(a, b);
       if (seen.has(key)) return;
       seen.add(key);
-      this.edges.push({ a, b, w: INITIAL_W * (0.6 + Math.random() * 0.8), alive: true });
+      this.edges.push({ a, b, w: INITIAL_W * (0.6 + this.rng() * 0.8), alive: true });
     };
 
     for (let i = 0; i < NODE_COUNT; i++) {
@@ -157,8 +161,8 @@ export class HebbianNetwork {
     }
     for (let k = 0; k < LONG_RANGE; k++) {
       addEdge(
-        Math.floor(Math.random() * NODE_COUNT),
-        Math.floor(Math.random() * NODE_COUNT),
+        Math.floor(this.rng() * NODE_COUNT),
+        Math.floor(this.rng() * NODE_COUNT),
       );
     }
 
@@ -173,7 +177,7 @@ export class HebbianNetwork {
   prune(fraction: number): number {
     let killed = 0;
     for (const e of this.edges) {
-      if (e.alive && Math.random() < fraction) {
+      if (e.alive && this.rng() < fraction) {
         e.alive = false;
         killed++;
       }
@@ -234,8 +238,8 @@ export class HebbianNetwork {
     }
 
     // ----- Ruido ambiental leve (mantiene la red viva sin dominarla) -----
-    if (Math.random() < dt * 1.5) {
-      this.nodes[Math.floor(Math.random() * NODE_COUNT)].a += 0.95;
+    if (this.rng() < dt * 1.5) {
+      this.nodes[Math.floor(this.rng() * NODE_COUNT)].a += 0.95;
     }
 
     // ----- Pincel de inyección de señal -----

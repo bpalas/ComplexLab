@@ -3,6 +3,7 @@ import { HebbianNetwork } from '../modules/network/engine';
 import { SandboxEngine, DEFAULT_PARAMS } from '../modules/sandbox/engine';
 import { CoordinationEngine, AGENTS } from '../modules/agents/engine';
 import { BoidsEngine, DEFAULT_BOIDS } from '../modules/boids/engine';
+import { SnowflakeEngine, DEFAULT_SNOW } from '../modules/snowflake/engine';
 
 export type PreviewKind =
   | 'synapse'
@@ -10,6 +11,7 @@ export type PreviewKind =
   | 'cellular'
   | 'agents'
   | 'boids'
+  | 'snowflake'
   | 'swarm'
   | 'cascade'
   | 'attention'
@@ -24,6 +26,7 @@ const KIND_BY_CODE: Record<string, PreviewKind> = {
   'AGI·01': 'agents',
   'AGI·02': 'cascade',
   'AGI·03': 'attention',
+  'PHY·01': 'snowflake',
 };
 
 export function previewKindFor(code: string): PreviewKind {
@@ -142,6 +145,14 @@ function paintBoids(ctx: CanvasRenderingContext2D, w: number, h: number): void {
   eng.render(ctx, w, h);
 }
 
+/** PHY·01 — copo real: modelo de Reiter en red pequeña, semilla fija. */
+function paintSnowflake(ctx: CanvasRenderingContext2D, w: number, h: number): void {
+  const eng = new SnowflakeEngine(42, 7);
+  eng.journey = true;
+  for (let s = 0; s < 260 && !eng.done; s++) eng.step(DEFAULT_SNOW);
+  eng.render(ctx, w, h);
+}
+
 /** Motivo determinista para módulos sin motor: PRNG con semilla fija. */
 function mulberry32(seed: number): () => number {
   return function () {
@@ -248,6 +259,7 @@ const PAINTERS: Record<PreviewKind, (ctx: CanvasRenderingContext2D, w: number, h
   cellular: paintCellular,
   agents: paintAgents,
   boids: paintBoids,
+  snowflake: paintSnowflake,
   swarm: paintSwarm,
   cascade: paintCascade,
   attention: paintAttention,

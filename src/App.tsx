@@ -6,8 +6,9 @@ import { NetworkSim } from './modules/network/NetworkSim';
 import { AgentsSim } from './modules/agents/AgentsSim';
 import { CellularSim } from './modules/cellular/CellularSim';
 import { BoidsSim } from './modules/boids/BoidsSim';
+import { SnowflakeSim } from './modules/snowflake/SnowflakeSim';
 
-export type View = 'dashboard' | 'laboratorio' | 'red' | 'agentes' | 'celular' | 'boids';
+export type View = 'dashboard' | 'laboratorio' | 'red' | 'agentes' | 'celular' | 'boids' | 'nieve';
 
 
 export function App() {
@@ -85,6 +86,16 @@ export function App() {
               sub="256 reglas de Wolfram · 4 clases de complejidad · frontera toroidal"
             />
             <CellularSim />
+          </>
+        )}
+        {view === 'nieve' && (
+          <>
+            <ModuleHeader
+              code="PHY·01"
+              title="Copos de Nieve · Cristalización Hexagonal"
+              sub="Modelo de Reiter · enlaces de hidrógeno → hielo Ih · por qué ningún copo es igual"
+            />
+            <SnowflakeSim />
           </>
         )}
       </main>

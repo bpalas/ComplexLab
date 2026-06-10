@@ -77,6 +77,20 @@ const CATEGORIES: CategoryDef[] = [
       },
     ],
   },
+  {
+    index: '03',
+    name: 'Física y Química de la Emergencia',
+    blurb:
+      'Cómo las propiedades de la materia a escala molecular — enlaces, simetrías, difusión — esculpen estructuras macroscópicas que parecen diseñadas.',
+    modules: [
+      {
+        code: 'PHY·01',
+        title: 'Copos de Nieve · Cristalización Hexagonal',
+        desc: 'El enlace de hidrógeno del H₂O impone la simetría de orden 6; el viaje atmosférico de cada cristal lo hace irrepetible. Modelo de Reiter en red hexagonal.',
+        view: 'nieve',
+      },
+    ],
+  },
 ];
 
 export function Dashboard({ onOpen }: { onOpen: (v: View) => void }) {

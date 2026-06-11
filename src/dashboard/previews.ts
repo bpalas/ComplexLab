@@ -4,6 +4,7 @@ import { SandboxEngine, DEFAULT_PARAMS } from '../modules/sandbox/engine';
 import { CoordinationEngine, AGENTS } from '../modules/agents/engine';
 import { BoidsEngine, DEFAULT_BOIDS } from '../modules/boids/engine';
 import { SnowflakeEngine, DEFAULT_SNOW } from '../modules/snowflake/engine';
+import { ReactionDiffusion, DEFAULT_RD, RD_PRESETS } from '../modules/reaction/engine';
 import {
   BOARD,
   ChessRLEngine,
@@ -19,6 +20,7 @@ export type PreviewKind =
   | 'agents'
   | 'boids'
   | 'snowflake'
+  | 'reaction'
   | 'swarm'
   | 'cascade'
   | 'attention'
@@ -36,6 +38,7 @@ const KIND_BY_CODE: Record<string, PreviewKind> = {
   'AGI·02': 'cascade',
   'AGI·03': 'attention',
   'PHY·01': 'snowflake',
+  'PHY·02': 'reaction',
   'RL·01': 'chessrl',
   'RL·02': 'bandit',
 };
@@ -162,6 +165,25 @@ function paintSnowflake(ctx: CanvasRenderingContext2D, w: number, h: number): vo
   eng.journey = true;
   for (let s = 0; s < 1400 && !eng.done; s++) eng.step(DEFAULT_SNOW);
   eng.render(ctx, w, h);
+}
+
+/** PHY·02 — reacción-difusión real: preset «laberinto» (rayas) tras estabilizar. */
+function paintReaction(ctx: CanvasRenderingContext2D, w: number, h: number): void {
+  const GW = 120;
+  const GH = 80;
+  const eng = new ReactionDiffusion(GW, GH, 7);
+  const lab = RD_PRESETS[2]; // laberinto / rayas de cebra
+  const p = { ...DEFAULT_RD, feed: lab.feed, kill: lab.kill };
+  for (let s = 0; s < 2500; s++) eng.update(1 / 60, p, 1);
+  // Render del estado a una rejilla pequeña y escalado al lienzo de la tarjeta.
+  const off = document.createElement('canvas');
+  off.width = GW;
+  off.height = GH;
+  const octx = off.getContext('2d')!;
+  const img = octx.createImageData(GW, GH);
+  eng.render(octx, img);
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(off, 0, 0, w, h);
 }
 
 /** Motivo determinista para módulos sin motor: PRNG con semilla fija. */
@@ -335,6 +357,7 @@ const PAINTERS: Record<PreviewKind, (ctx: CanvasRenderingContext2D, w: number, h
   agents: paintAgents,
   boids: paintBoids,
   snowflake: paintSnowflake,
+  reaction: paintReaction,
   swarm: paintSwarm,
   cascade: paintCascade,
   attention: paintAttention,

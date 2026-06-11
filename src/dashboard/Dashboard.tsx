@@ -89,6 +89,12 @@ const CATEGORIES: CategoryDef[] = [
         desc: 'El enlace de hidrógeno del H₂O impone la simetría de orden 6; el viaje atmosférico de cada cristal lo hace irrepetible. Modelo de Reiter en red hexagonal.',
         view: 'nieve',
       },
+      {
+        code: 'PHY·02',
+        title: 'Reacción-Difusión · Manchas y Rayas',
+        desc: 'Por qué la cebra tiene rayas y el leopardo manchas. Dos químicos (Gray-Scott) que difunden y reaccionan; ecuación en vivo, sonda por píxel y mapa f–k del zoo de Turing.',
+        view: 'reaccion',
+      },
     ],
   },
   {

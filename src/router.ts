@@ -11,6 +11,7 @@ const VIEWS: readonly View[] = [
   'boids',
   'nieve',
   'ajedrez',
+  'reaccion',
 ];
 
 const VIEW_SET = new Set<string>(VIEWS);

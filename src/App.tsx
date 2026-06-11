@@ -5,6 +5,7 @@ import { SandboxSim } from './modules/sandbox/SandboxSim';
 import { NetworkSim } from './modules/network/NetworkSim';
 import { AgentsSim } from './modules/agents/AgentsSim';
 import { CellularSim } from './modules/cellular/CellularSim';
+import { LifeSim } from './modules/life/LifeSim';
 import { BoidsSim } from './modules/boids/BoidsSim';
 import { SnowflakeSim } from './modules/snowflake/SnowflakeSim';
 import { ChessRLSim } from './modules/chessrl/ChessRLSim';
@@ -16,6 +17,7 @@ export type View =
   | 'red'
   | 'agentes'
   | 'celular'
+  | 'vida'
   | 'boids'
   | 'nieve'
   | 'ajedrez'
@@ -109,6 +111,16 @@ export function App() {
             <CellularSim />
           </>
         )}
+        {view === 'vida' && (
+          <>
+            <ModuleHeader
+              code="NET·04"
+              title="El Juego de la Vida · Conway"
+              sub="4 reglas (B3/S23) · gliders, osciladores y cañones · orden emergente sin diseñador"
+            />
+            <LifeSim />
+          </>
+        )}
         {view === 'nieve' && (
           <>
             <ModuleHeader
@@ -124,7 +136,7 @@ export function App() {
             <ModuleHeader
               code="PHY·02"
               title="Reacción-Difusión · Cómo se forman manchas y rayas"
-              sub="Morfogénesis de Turing · Gray-Scott · ecuación en vivo, sonda y mapa f–k del zoo de Turing"
+              sub="Morfogénesis de Turing · Gray-Scott · elige un patrón, dale play y pinta sobre el lienzo"
             />
             <ReactionSim />
           </>

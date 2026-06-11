@@ -8,6 +8,7 @@ const VIEWS: readonly View[] = [
   'red',
   'agentes',
   'celular',
+  'vida',
   'boids',
   'nieve',
   'ajedrez',

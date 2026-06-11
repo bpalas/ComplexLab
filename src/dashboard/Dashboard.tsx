@@ -45,6 +45,12 @@ const CATEGORIES: CategoryDef[] = [
         desc: 'Construye una regla local de 8 bits y observa las cuatro clases de Wolfram: orden, fractales, caos y computación al borde del caos.',
         view: 'celular',
       },
+      {
+        code: 'NET·04',
+        title: 'El Juego de la Vida (Conway)',
+        desc: 'Cuatro reglas sobre una rejilla de unos y ceros bastan para que del caos broten gliders que caminan, osciladores y cañones que fabrican objetos sin fin.',
+        view: 'vida',
+      },
     ],
   },
   {
@@ -92,7 +98,7 @@ const CATEGORIES: CategoryDef[] = [
       {
         code: 'PHY·02',
         title: 'Reacción-Difusión · Manchas y Rayas',
-        desc: 'Por qué la cebra tiene rayas y el leopardo manchas. Dos químicos (Gray-Scott) que difunden y reaccionan; ecuación en vivo, sonda por píxel y mapa f–k del zoo de Turing.',
+        desc: 'Por qué la cebra tiene rayas y el leopardo manchas. Elige un patrón — mitosis, laberinto, lunares — y mira cómo dos químicos lo dibujan solos. Pinta para perturbarlo.',
         view: 'reaccion',
       },
     ],

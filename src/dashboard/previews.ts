@@ -1,4 +1,5 @@
 import { ElementaryCA } from '../modules/cellular/engine';
+import { GameOfLife, PATTERNS } from '../modules/life/engine';
 import { HebbianNetwork } from '../modules/network/engine';
 import { SandboxEngine, DEFAULT_PARAMS } from '../modules/sandbox/engine';
 import { CoordinationEngine, AGENTS } from '../modules/agents/engine';
@@ -17,6 +18,7 @@ export type PreviewKind =
   | 'synapse'
   | 'network'
   | 'cellular'
+  | 'life'
   | 'agents'
   | 'boids'
   | 'snowflake'
@@ -33,6 +35,7 @@ const KIND_BY_CODE: Record<string, PreviewKind> = {
   'NET·01': 'network',
   'NET·02': 'swarm',
   'NET·03': 'cellular',
+  'NET·04': 'life',
   'AGI·00': 'boids',
   'AGI·01': 'agents',
   'AGI·02': 'cascade',
@@ -65,6 +68,25 @@ function paintCellular(ctx: CanvasRenderingContext2D, w: number, h: number): voi
     const row = ca.step();
     for (let i = 0; i < cols; i++) {
       if (row[i]) ctx.fillRect(i * px, y * px, px + 0.5, px + 0.5);
+    }
+  }
+}
+
+/** NET·04 — Vida de Conway real: cañón de Gosper tras emitir sus primeros gliders. */
+function paintLife(ctx: CanvasRenderingContext2D, w: number, h: number): void {
+  ctx.fillStyle = BG;
+  ctx.fillRect(0, 0, w, h);
+  const cols = 72;
+  const px = w / cols;
+  const rows = Math.floor(h / px);
+  const g = new GameOfLife(cols, rows);
+  const gun = PATTERNS.find((p) => p.name === 'Cañón de Gosper')!;
+  g.stamp(gun, 4, 3);
+  for (let s = 0; s < 90; s++) g.step();
+  ctx.fillStyle = '#45e6c8';
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      if (g.get(x, y)) ctx.fillRect(x * px, y * px, px + 0.5, px + 0.5);
     }
   }
 }
@@ -354,6 +376,7 @@ const PAINTERS: Record<PreviewKind, (ctx: CanvasRenderingContext2D, w: number, h
   synapse: paintSynapse,
   network: paintNetwork,
   cellular: paintCellular,
+  life: paintLife,
   agents: paintAgents,
   boids: paintBoids,
   snowflake: paintSnowflake,

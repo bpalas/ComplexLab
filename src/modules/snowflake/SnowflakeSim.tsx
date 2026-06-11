@@ -3,6 +3,7 @@ import { SnowflakeEngine, SnowParams, SnowStats, DEFAULT_SNOW } from './engine';
 import { Slider } from '../../components/Slider';
 import { FormulaPanel, FormulaCard } from '../../components/math/FormulaPanel';
 import { MathInline } from '../../components/math/Math';
+import { useReducedMotion } from '../../useReducedMotion';
 
 /** Pasos de simulación por segundo a velocidad 1× — lento a propósito:
  *  el copo debe verse CRECER rama a rama, no aparecer como una nube. */
@@ -36,8 +37,9 @@ export function SnowflakeSim() {
   const engineRef = useRef<SnowflakeEngine | null>(null);
   const paramsRef = useRef<SnowParams>({ ...DEFAULT_SNOW });
   const speedRef = useRef(1);
-  const playingRef = useRef(true);
-  const [playing, setPlaying] = useState(true);
+  const reducedMotion = useReducedMotion();
+  const playingRef = useRef(!reducedMotion);
+  const [playing, setPlaying] = useState(!reducedMotion);
   const [journey, setJourney] = useState(true);
   const [seed, setSeed] = useState(1);
 

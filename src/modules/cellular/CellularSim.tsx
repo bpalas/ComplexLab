@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ElementaryCA, SeedMode } from './engine';
 import { Slider } from '../../components/Slider';
+import { useReducedMotion } from '../../useReducedMotion';
 
 const CELLS = 360; // células por fila
 const SCALE = 3; // px internos por célula
@@ -28,11 +29,12 @@ export function CellularSim() {
   const speedRef = useRef(1);
   const densityRef = useRef(0.5);
   const seedModeRef = useRef<SeedMode>('single');
-  const playingRef = useRef(true);
+  const reducedMotion = useReducedMotion();
+  const playingRef = useRef(!reducedMotion);
   const stepOnceRef = useRef(false);
 
   const [rule, setRuleUI] = useState(110);
-  const [playing, setPlaying] = useState(true);
+  const [playing, setPlaying] = useState(!reducedMotion);
   const [speed, setSpeed] = useState(1);
   const [seedMode, setSeedMode] = useState<SeedMode>('single');
 

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useReducedMotion } from '../../useReducedMotion';
 import { BoidsEngine, BoidsParams, BoidsStats, DEFAULT_BOIDS } from './engine';
 import { Slider } from '../../components/Slider';
 
@@ -59,6 +60,9 @@ export function BoidsSim() {
   const engineRef = useRef<BoidsEngine | null>(null);
   const paramsRef = useRef<BoidsParams>({ ...DEFAULT_BOIDS });
   const sizeRef = useRef({ w: 0, h: 0 });
+  const reducedMotion = useReducedMotion();
+  const playingRef = useRef(!reducedMotion);
+  const [playing, setPlaying] = useState(!reducedMotion);
   const [preset, setPreset] = useState('bandada');
   const [sliderEpoch, setSliderEpoch] = useState(0); // fuerza remount de sliders al aplicar preset
 
@@ -88,7 +92,9 @@ export function BoidsSim() {
     const loop = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
-      engine.update(dt, paramsRef.current, sizeRef.current.w, sizeRef.current.h);
+      if (playingRef.current) {
+        engine.update(dt, paramsRef.current, sizeRef.current.w, sizeRef.current.h);
+      }
       engine.render(ctx, sizeRef.current.w, sizeRef.current.h);
       raf = requestAnimationFrame(loop);
     };
@@ -213,6 +219,15 @@ export function BoidsSim() {
         />
 
         <div className="btn-stack">
+          <button
+            className="btn"
+            onClick={() => {
+              playingRef.current = !playing;
+              setPlaying(!playing);
+            }}
+          >
+            {playing ? '❚❚ Pausa' : '▶ Reproducir'}
+          </button>
           <button
             className="btn"
             onClick={() => engineRef.current!.reset(sizeRef.current.w || 900, sizeRef.current.h || 600)}

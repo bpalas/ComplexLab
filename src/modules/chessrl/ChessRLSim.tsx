@@ -9,6 +9,7 @@ import {
 } from './engine';
 import { StatChart } from './StatChart';
 import { Slider } from '../../components/Slider';
+import { useReducedMotion } from '../../useReducedMotion';
 
 const SPEEDS = [
   { label: '1×', mps: 3 },
@@ -27,13 +28,14 @@ export function ChessRLSim() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<ChessRLEngine | null>(null);
   const paramsRef = useRef<RLParams>({ ...DEFAULT_RL });
-  const playingRef = useRef(true);
+  const reducedMotion = useReducedMotion();
+  const playingRef = useRef(!reducedMotion);
   const speedRef = useRef(1);
   const accRef = useRef(0);
   const heatRef = useRef(true);
   const arrowRef = useRef(true);
 
-  const [playing, setPlaying] = useState(true);
+  const [playing, setPlaying] = useState(!reducedMotion);
   const [speedIdx, setSpeedIdx] = useState(1);
   const [heat, setHeat] = useState(true);
   const [arrow, setArrow] = useState(true);

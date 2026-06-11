@@ -10,6 +10,7 @@ import {
 import { LiveFormula } from './LiveFormula';
 import { PhaseMap } from './PhaseMap';
 import { Slider } from '../../components/Slider';
+import { useReducedMotion } from '../../useReducedMotion';
 
 const GRID_W = 200;
 const GRID_H = 150;
@@ -193,9 +194,10 @@ export function ReactionSim() {
   const engineRef = useRef<ReactionDiffusion | null>(null);
   const paramsRef = useRef<RDParams>({ ...DEFAULT_RD });
   const speedRef = useRef(1);
-  const playingRef = useRef(true);
+  const reducedMotion = useReducedMotion();
+  const playingRef = useRef(!reducedMotion);
   const toolRef = useRef<'brush' | 'probe'>('brush');
-  const [playing, setPlaying] = useState(true);
+  const [playing, setPlaying] = useState(!reducedMotion);
   const [tool, setTool] = useState<'brush' | 'probe'>('brush');
   const [preset, setPreset] = useState(RD_PRESETS[0].key);
   const [sliderEpoch, setSliderEpoch] = useState(0);

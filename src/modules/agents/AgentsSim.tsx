@@ -7,6 +7,7 @@ import {
   RoundRecord,
 } from './engine';
 import { ConvergenceChart } from './ConvergenceChart';
+import { useReducedMotion } from '../../useReducedMotion';
 
 const MODE_INFO: Record<AgentMode, { title: string; tag: string; desc: string }> = {
   homogeneo: {
@@ -58,8 +59,9 @@ export function AgentsSim() {
   if (!engineRef.current) engineRef.current = new CoordinationEngine();
   const engine = engineRef.current;
 
+  const reducedMotion = useReducedMotion();
   const [mode, setMode] = useState<AgentMode>('homogeneo');
-  const [playing, setPlaying] = useState(true);
+  const [playing, setPlaying] = useState(!reducedMotion);
   const [speedIdx, setSpeedIdx] = useState(0);
   const [, setTick] = useState(0);
 

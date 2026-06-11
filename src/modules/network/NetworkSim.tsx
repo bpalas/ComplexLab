@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { HebbianNetwork, NetParams, NetStats } from './engine';
 import { Slider } from '../../components/Slider';
+import { useReducedMotion } from '../../useReducedMotion';
 
 const DEFAULTS: NetParams = {
   threshold: 1.0,
@@ -37,6 +38,9 @@ export function NetworkSim() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<HebbianNetwork | null>(null);
   const paramsRef = useRef<NetParams>({ ...DEFAULTS });
+  const reducedMotion = useReducedMotion();
+  const playingRef = useRef(!reducedMotion);
+  const [playing, setPlaying] = useState(!reducedMotion);
   const [pruneFlash, setPruneFlash] = useState<string | null>(null);
 
   if (!engineRef.current) engineRef.current = new HebbianNetwork();
@@ -67,7 +71,9 @@ export function NetworkSim() {
     const loop = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
-      engine.update(dt, paramsRef.current, cssW, cssH);
+      if (playingRef.current) {
+        engine.update(dt, paramsRef.current, cssW, cssH);
+      }
       engine.render(ctx, cssW, cssH, paramsRef.current);
       raf = requestAnimationFrame(loop);
     };
@@ -142,6 +148,15 @@ export function NetworkSim() {
         />
 
         <div className="btn-stack">
+          <button
+            className="btn"
+            onClick={() => {
+              playingRef.current = !playing;
+              setPlaying(!playing);
+            }}
+          >
+            {playing ? '❚❚ Pausa' : '▶ Reproducir'}
+          </button>
           <button className="btn btn-warn" onClick={handlePrune}>
             ⚡ Regularización masiva (pruning −30%)
           </button>

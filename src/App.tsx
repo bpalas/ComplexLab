@@ -8,8 +8,18 @@ import { CellularSim } from './modules/cellular/CellularSim';
 import { BoidsSim } from './modules/boids/BoidsSim';
 import { SnowflakeSim } from './modules/snowflake/SnowflakeSim';
 import { ChessRLSim } from './modules/chessrl/ChessRLSim';
+import { ReactionSim } from './modules/reaction/ReactionSim';
 
-export type View = 'dashboard' | 'laboratorio' | 'red' | 'agentes' | 'celular' | 'boids' | 'nieve' | 'ajedrez';
+export type View =
+  | 'dashboard'
+  | 'laboratorio'
+  | 'red'
+  | 'agentes'
+  | 'celular'
+  | 'boids'
+  | 'nieve'
+  | 'ajedrez'
+  | 'reaccion';
 
 
 export function App() {
@@ -107,6 +117,16 @@ export function App() {
               sub="Modelo de Reiter · enlaces de hidrógeno → hielo Ih · por qué ningún copo es igual"
             />
             <SnowflakeSim />
+          </>
+        )}
+        {view === 'reaccion' && (
+          <>
+            <ModuleHeader
+              code="PHY·02"
+              title="Reacción-Difusión · Cómo se forman manchas y rayas"
+              sub="Morfogénesis de Turing · Gray-Scott · ecuación en vivo, sonda y mapa f–k del zoo de Turing"
+            />
+            <ReactionSim />
           </>
         )}
       </main>

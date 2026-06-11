@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Complex Labs — Simulaciones interactivas de sistemas complejos">
+  <defs>
+    <radialGradient id="glow" cx="78%" cy="28%" r="60%">
+      <stop offset="0%" stop-color="#0c2b27"/>
+      <stop offset="100%" stop-color="#04070d"/>
+    </radialGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#45e6c8"/>
+      <stop offset="100%" stop-color="#4aa8ff"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- nodos geométricos a la derecha: un pequeño grafo de un sistema complejo -->
+  <g stroke="#45e6c8" stroke-opacity="0.45" stroke-width="2" fill="none">
+    <path d="M915 150 L1050 235 L1050 405 L915 490 L780 405 L780 235 Z"/>
+    <path d="M915 150 L915 320 M1050 235 L915 320 M1050 405 L915 320 M915 490 L915 320 M780 405 L915 320 M780 235 L915 320"/>
+    <path d="M780 235 L660 175 M780 405 L660 470 M1050 235 L1120 320"/>
+  </g>
+  <g fill="#45e6c8">
+    <circle cx="915" cy="320" r="11"/>
+    <circle cx="915" cy="150" r="8"/>
+    <circle cx="1050" cy="235" r="8"/>
+    <circle cx="1050" cy="405" r="8"/>
+    <circle cx="915" cy="490" r="8"/>
+    <circle cx="780" cy="405" r="8"/>
+    <circle cx="780" cy="235" r="8"/>
+  </g>
+  <g fill="#4aa8ff">
+    <circle cx="660" cy="175" r="6"/>
+    <circle cx="660" cy="470" r="6"/>
+    <circle cx="1120" cy="320" r="6"/>
+  </g>
+
+  <!-- texto -->
+  <text x="90" y="250" font-family="'Plus Jakarta Sans', 'Segoe UI', sans-serif" font-size="34" letter-spacing="6" fill="#45e6c8" font-weight="600">LABORATORIO DE SISTEMAS COMPLEJOS</text>
+  <text x="86" y="370" font-family="'Plus Jakarta Sans', 'Segoe UI', sans-serif" font-size="108" fill="#d8e6e9" font-weight="800">Complex <tspan fill="url(#accent)">Labs</tspan></text>
+  <text x="90" y="440" font-family="'Plus Jakarta Sans', 'Segoe UI', sans-serif" font-size="38" fill="#6b8292" font-weight="500">Simulaciones interactivas de sistemas complejos</text>
+
+  <rect x="90" y="488" width="92" height="5" rx="2.5" fill="url(#accent)"/>
+</svg>

@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { useTheme } from './theme';
+import { useHashView } from './router';
 import { Dashboard } from './dashboard/Dashboard';
 import { SandboxSim } from './modules/sandbox/SandboxSim';
 import { NetworkSim } from './modules/network/NetworkSim';
@@ -13,7 +13,7 @@ export type View = 'dashboard' | 'laboratorio' | 'red' | 'agentes' | 'celular' |
 
 
 export function App() {
-  const [view, setView] = useState<View>('dashboard');
+  const [view, setView] = useHashView();
   const { theme, toggle } = useTheme();
 
   return (
